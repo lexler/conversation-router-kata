@@ -48,12 +48,12 @@ public class RoutingRules {
                 messageBuilder.append(VERIFIED);
             }
 
-            String pageQueue = "";
             //check if author has exec tags, put into exec queue according to which author tag is added. customer type does not indicate queue in this case.
             if (authorHasExecTag(context)) {
-                return sendToVipQueue(event, context, pageQueue);
+                return sendToVipQueue(event, context);
             }
 
+            String pageQueue = "";
             //check if convo has exec tags put into exec queue according to which exec is mentioned. customer type does not indicate queue in this case.
             if (!NO_EXEC_MENTION_TAG.equalsIgnoreCase(context.execMention())) {
                 log.info(message("Conversation has Exec mention tags.", "getAssignedWorkQueue")
@@ -205,9 +205,8 @@ public class RoutingRules {
         }
     }
 
-    private QueueInfo sendToVipQueue(BotEvent event, RoutingContext context, String pageQueue) {
+    private QueueInfo sendToVipQueue(BotEvent event, RoutingContext context) {
         StringBuilder notification = new StringBuilder(130);
-        //if already bound/or completed bind add verified message to output message
         if (context.bound() || context.status().contains(SUBMITTED)) {
             notification.append(VERIFIED);
         }
@@ -217,6 +216,7 @@ public class RoutingRules {
             .param(EVENT_STATUS, context.status())
             .add(event.toLogContext()));
 
+        String pageQueue = "";
         if (FALCONAIR.equalsIgnoreCase(context.authorTag())) {
             pageQueue = config.getProperty("falcon.exec.queue");
             notification.append(AUTHOR_EXEC_FALCONAIR);
