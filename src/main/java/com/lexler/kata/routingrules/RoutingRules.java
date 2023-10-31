@@ -107,14 +107,8 @@ public class RoutingRules {
                 String pageQueue = "";
                 if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
                     if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-                            pageQueue = config.getProperty("falcon.instagram.disruption");
-                            messageBuilder.append(DISRUPTION_MENTION);
-                            messageBuilder.append(INSTAGRAM_CHANNEL);
-                        } else {
-                            pageQueue = config.getProperty("falcon.instagram.care");
-                            messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
-                        }
+                        pageQueue = config.getProperty("falcon.instagram.care");
+                        messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
                     } else {//falcon and fb channel
                         if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
                             pageQueue = config.getProperty("falcon.fb.disruption");
