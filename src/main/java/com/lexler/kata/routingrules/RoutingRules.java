@@ -66,7 +66,7 @@ public class RoutingRules {
                 return returnResult(event, messageBuilder, pageQueue);
             }
 
-            if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
+            if (context.disruptionTag().equalsIgnoreCase(DISRUPTION)) {
                 String pageQueue = "";
                 if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                     pageQueue = config.getProperty("falcon.instagram.disruption");
