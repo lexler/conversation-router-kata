@@ -110,30 +110,17 @@ public class RoutingRules {
                         pageQueue = config.getProperty("falcon.instagram.care");
                         messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
                     } else {//falcon and fb channel
-                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-
-                        } else {
-                            pageQueue = config.getProperty("falcon.fb.care");
-                            messageBuilder.append(NO_CUSTOMER_BRAND_FB);
-                        }
+                        pageQueue = config.getProperty("falcon.fb.care");
+                        messageBuilder.append(NO_CUSTOMER_BRAND_FB);
                     }
                     return returnResult(event, messageBuilder, pageQueue);
                 } else {
                     if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-
-                        } else {
-                            pageQueue = config.getProperty("falcon.instagram.care");
-                            messageBuilder.append(FALCONAIR_CUSTOMER_INSTAGRAM);
-                        }
-
+                        pageQueue = config.getProperty("falcon.instagram.care");
+                        messageBuilder.append(FALCONAIR_CUSTOMER_INSTAGRAM);
                     } else {//falcon and fb channel
-                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-                        } else {
-                            pageQueue = config.getProperty("falcon.fb.care");
-                            messageBuilder.append(FALCONAIR_CUSTOMER_FB);
-                        }
-
+                        pageQueue = config.getProperty("falcon.fb.care");
+                        messageBuilder.append(FALCONAIR_CUSTOMER_FB);
                     }
                     return returnResult(event, messageBuilder, pageQueue);
                 }
