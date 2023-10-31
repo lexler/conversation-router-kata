@@ -65,15 +65,6 @@ public class RoutingRules {
                     }
                     return returnResult(event, messageBuilder, pageQueue);
                 } else {
-                    //at this point expecting customer brand and/or bind/status details to be present without exect tags
-                    log.info(message("Checking customer brand.", "getAssignedWorkQueue")
-                        .add(event.toLogContext()));
-
-                    //customer is falconair or prospect (or not in merged loyalty DB yet)
-                    log.info(message("Customer identified as non DuckWings customer", "getAssignedWorkQueue")
-                        .param(EVENT_STATUS, context.status())
-                        .param(CUSTOMER_BRAND, context.customerBrand())
-                        .add(event.toLogContext()));
                     if (context.greece() && INSTAGRAM.equalsIgnoreCase(context.network())) {
                         pageQueue = config.getProperty("gr.instagram");
                         messageBuilder.append(FALCONAIR_CUSTOMER_GR_INSTAGRAM);
