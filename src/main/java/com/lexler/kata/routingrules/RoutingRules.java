@@ -38,15 +38,14 @@ public class RoutingRules {
                 return sendToVipQueue(event, context);
             }
 
-            StringBuilder messageBuilder = new StringBuilder(130);
-            //if already bound/or completed bind add verified message to output message
-            if (context.bound() || context.status().contains(SUBMITTED)) {
-                messageBuilder.append(VERIFIED);
-            }
-
-            String pageQueue = "";
-            //check if convo has exec tags put into exec queue according to which exec is mentioned. customer type does not indicate queue in this case.
+           //check if convo has exec tags put into exec queue according to which exec is mentioned. customer type does not indicate queue in this case.
             if (!NO_EXEC_MENTION_TAG.equalsIgnoreCase(context.execMention())) {
+                StringBuilder messageBuilder = new StringBuilder(130);
+                //if already bound/or completed bind add verified message to output message
+                if (context.bound() || context.status().contains(SUBMITTED)) {
+                    messageBuilder.append(VERIFIED);
+                }
+                String pageQueue = "";
                 log.info(message("Conversation has Exec mention tags.", "getAssignedWorkQueue")
                     .param(EXEC_MENTION, context.execMention())
                     .add(event.toLogContext()));
@@ -61,9 +60,15 @@ public class RoutingRules {
                     pageQueue = config.getProperty("gr.exec.queue");
                     messageBuilder.append(EXEC_MENTION_GR);
                 }
-
+                return returnResult(event, messageBuilder, pageQueue);
                 //if no exec tags are present in conversation& author, assign based on customerType and pageId
             } else if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
+                StringBuilder messageBuilder = new StringBuilder(130);
+                //if already bound/or completed bind add verified message to output message
+                if (context.bound() || context.status().contains(SUBMITTED)) {
+                    messageBuilder.append(VERIFIED);
+                }
+                String pageQueue = "";
                 log.info(message("Conversation has no customer brand. Assigning default falconair queue based on network type and pageid.", "getAssignedWorkQueue")
                     .param(CUSTOMER_BRAND, context.customerBrand())
                     .add(event.toLogContext()));
@@ -109,7 +114,14 @@ public class RoutingRules {
                         messageBuilder.append(NO_CUSTOMER_BRAND_FB);
                     }
                 }
+                return returnResult(event, messageBuilder, pageQueue);
             } else {//at this point expecting customer brand and/or bind/status details to be present without exect tags
+                StringBuilder messageBuilder = new StringBuilder(130);
+                //if already bound/or completed bind add verified message to output message
+                if (context.bound() || context.status().contains(SUBMITTED)) {
+                    messageBuilder.append(VERIFIED);
+                }
+                String pageQueue = "";
                 log.info(message("Checking customer brand.", "getAssignedWorkQueue")
                     .add(event.toLogContext()));
 
@@ -182,8 +194,9 @@ public class RoutingRules {
 
                     }
                 }
+                return returnResult(event, messageBuilder, pageQueue);
             }
-            return returnResult(event, messageBuilder, pageQueue);
+
 
         } catch (Exception e) {
             log.error(message("An error occurred when trying to assign work queue id. Assigning default values", "getAssignedWorkQueue")
