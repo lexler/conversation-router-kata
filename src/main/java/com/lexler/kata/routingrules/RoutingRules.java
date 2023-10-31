@@ -34,14 +34,12 @@ public class RoutingRules {
         try {
             RoutingInfo result = routingInfo(event, conversationId, requestId, channelId);
 
-            //route to bot queue if convo is not bound and needs to wait on timer function
+            // route to bot queue if convo is not bound and needs to wait on timer function
             if (!result.bound() && NO_STATUS.equalsIgnoreCase(result.status())) {
                 log.info(message("Conversation is not bound, and status is empty or null. Assigning to the bot queue", "getAssignedWorkQueue")
-                    .param(CONVERSATION_ID, conversationId)
-                    .param(REQUEST_ID, requestId)
-                    .param(CHANNEL_ID, channelId)
                     .param(BIND_STATUS, result.bound())
-                    .param(EVENT_STATUS, result.status()));
+                    .param(EVENT_STATUS, result.status())
+                    .add(event.toLogContext()));
 
                 pageQueue = config.getProperty("bot.queue");
                 messageBuilder.append(NOT_BOUND_BOT_QUEUE);
@@ -49,11 +47,9 @@ public class RoutingRules {
                 //if convo is bound or is timer function event
             } else if ((result.bound() || result.status().contains(EXPIRED) || result.status().contains(SUBMITTED) || result.status().contains(BYPASS))) {
                 log.info(message("Conversation is either bound, bypassed or the timer expired. Assigning it to a new workQueue.", "getAssignedWorkQueue")
-                    .param(CONVERSATION_ID, conversationId)
-                    .param(REQUEST_ID, requestId)
-                    .param(CHANNEL_ID, channelId)
                     .param(BIND_STATUS, result.bound())
-                    .param(EVENT_STATUS, result.status()));
+                    .param(EVENT_STATUS, result.status())
+                    .add(event.toLogContext()));
 
                 //if already bound/or completed bind add verified message to output message
                 if (result.bound() || result.status().contains(SUBMITTED)) {
@@ -63,11 +59,10 @@ public class RoutingRules {
                 //check if author has exec tags, put into exec queue according to which author tag is added. customer type does not indicate queue in this case.
                 if (!(NO_AUTHOR_EXEC_TAG.equalsIgnoreCase(result.authorTag()))) {
                     log.info(message("Conversation has Author Exec tags. Assigning to one of the exec queues", "getAssignedWorkQueue")
-                        .param(CONVERSATION_ID, conversationId)
-                        .param(REQUEST_ID, requestId)
-                        .param(CHANNEL_ID, channelId)
                         .param(BIND_STATUS, result.bound())
-                        .param(EVENT_STATUS, result.status()));
+                        .param(EVENT_STATUS, result.status())
+                        .add(event.toLogContext()));
+
                     if (FALCONAIR.equalsIgnoreCase(result.authorTag())) {
                         pageQueue = config.getProperty("falcon.exec.queue");
                         messageBuilder.append(AUTHOR_EXEC_FALCONAIR);
@@ -81,10 +76,8 @@ public class RoutingRules {
                     //check if convo has exec tags put into exec queue according to which exec is mentioned. customer type does not indicate queue in this case.
                 } else if (!NO_EXEC_MENTION_TAG.equalsIgnoreCase(result.execMention())) {
                     log.info(message("Conversation has Exec mention tags.", "getAssignedWorkQueue")
-                        .param(CONVERSATION_ID, conversationId)
-                        .param(REQUEST_ID, requestId)
-                        .param(CHANNEL_ID, channelId)
-                        .param(EXEC_MENTION, result.execMention()));
+                        .param(EXEC_MENTION, result.execMention())
+                        .add(event.toLogContext()));
 
                     if (FALCONAIR.equalsIgnoreCase(result.execMention())) {
                         pageQueue = config.getProperty("falcon.exec.queue");
@@ -100,10 +93,8 @@ public class RoutingRules {
                     //if no exec tags are present in conversation& author, assign based on customerType and pageId
                 } else if (result.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(result.customerBrand())) {
                     log.info(message("Conversation has no customer brand. Assigning default falconair queue based on network type and pageid.", "getAssignedWorkQueue")
-                        .param(CONVERSATION_ID, conversationId)
-                        .param(REQUEST_ID, requestId)
-                        .param(CHANNEL_ID, channelId)
-                        .param(CUSTOMER_BRAND, result.customerBrand()));
+                        .param(CUSTOMER_BRAND, result.customerBrand())
+                        .add(event.toLogContext()));
                     //this indicated either a failure in LoyaltyHub api call, customer was not found, or we have not reAuthed person yet and no DB info was found
                     if (result.french()) {
                         pageQueue = config.getProperty("falcon.french.care");
@@ -148,15 +139,10 @@ public class RoutingRules {
                     }
                 } else {//at this point expecting customer brand and/or bind/status details to be present without exect tags
                     log.info(message("Checking customer brand.", "getAssignedWorkQueue")
-                        .param(CONVERSATION_ID, conversationId)
-                        .param(REQUEST_ID, requestId)
-                        .param(CHANNEL_ID, channelId));
+                        .add(event.toLogContext()));
 
                     if (DUCKWINGS.equalsIgnoreCase(result.customerBrand())) {
-                        log.info(message("Customer identified as DuckWings customer", "getAssignedWorkQueue")
-                            .param(CONVERSATION_ID, conversationId)
-                            .param(REQUEST_ID, requestId)
-                            .param(CHANNEL_ID, channelId));
+                        log.info(message("Customer identified as DuckWings customer", "getAssignedWorkQueue").add(event.toLogContext()));
                         if (result.french() && INSTAGRAM.equalsIgnoreCase(result.network())) {
                             pageQueue = config.getProperty("duck.french.instagram");
                             messageBuilder.append(DUCKWINGS_CUSTOMER_FRENCH_INSTAGRAM);
@@ -181,11 +167,9 @@ public class RoutingRules {
                         }
                     } else {//customer is falconair or prospect (or not in merged loyalty DB yet)
                         log.info(message("Customer identified as non DuckWings customer", "getAssignedWorkQueue")
-                            .param(CONVERSATION_ID, conversationId)
-                            .param(REQUEST_ID, requestId)
-                            .param(CHANNEL_ID, channelId)
                             .param(EVENT_STATUS, result.status())
-                            .param(CUSTOMER_BRAND, result.customerBrand()));
+                            .param(CUSTOMER_BRAND, result.customerBrand())
+                            .add(event.toLogContext()));
                         if (result.french()) {
                             pageQueue = config.getProperty("falcon.french.care");
                             messageBuilder.append(FALCONAIR_CUSTOMER_FRENCH);
@@ -264,30 +248,22 @@ public class RoutingRules {
         boolean french = isFrenchPage(externalId, requestId, conversationId, channelId);
         log.debug(message("French: " + french, "getAssignedWorkQueue")
             .param(PAGE_ID, externalId)
-            .param(CONVERSATION_ID, conversationId)
-            .param(REQUEST_ID, requestId)
-            .param(CHANNEL_ID, channelId));
+            .add(event.toLogContext()));
 
         boolean greece = isGreecePage(externalId, requestId, conversationId, channelId);
         log.debug(message("Greece: " + greece, "getAssignedWorkQueue")
             .param(PAGE_ID, externalId)
-            .param(CONVERSATION_ID, conversationId)
-            .param(REQUEST_ID, requestId)
-            .param(CHANNEL_ID, channelId));
+            .add(event.toLogContext()));
 
         boolean cyprus = isCyprus(externalId, requestId, conversationId, channelId);
         log.debug(message("Cyprus : " + cyprus, "getAssignedWorkQueue")
             .param(PAGE_ID, externalId)
-            .param(CONVERSATION_ID, conversationId)
-            .param(REQUEST_ID, requestId)
-            .param(CHANNEL_ID, channelId));
+            .add(event.toLogContext()));
 
         boolean biz = isBiz(externalId, requestId, conversationId, channelId);
         log.debug(message("FalconAir Business : " + biz, "getAssignedWorkQueue")
             .param(PAGE_ID, externalId)
-            .param(CONVERSATION_ID, conversationId)
-            .param(REQUEST_ID, requestId)
-            .param(CHANNEL_ID, channelId));
+            .add(event.toLogContext()));
 
         CustomerInfo customerInfo = event.customerInfo() == null ? new CustomerInfo() : event.customerInfo();
         boolean bound = customerInfo.bind();
