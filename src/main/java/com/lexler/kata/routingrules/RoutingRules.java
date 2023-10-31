@@ -55,15 +55,11 @@ public class RoutingRules {
             if (context.greece()) {
                 if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                     if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
-                        if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                            pageQueue = config.getProperty("gr.instagram");
-                            messageBuilder.append(NO_CUSTOMER_BRAND_GR_INSTAGRAM);
-                        }
+                        pageQueue = config.getProperty("gr.instagram");
+                        messageBuilder.append(NO_CUSTOMER_BRAND_GR_INSTAGRAM);
                     } else {
-                        if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                            pageQueue = config.getProperty("gr.instagram");
-                            messageBuilder.append(FALCONAIR_CUSTOMER_GR_INSTAGRAM);
-                        }
+                        pageQueue = config.getProperty("gr.instagram");
+                        messageBuilder.append(FALCONAIR_CUSTOMER_GR_INSTAGRAM);
                     }
                     return returnResult(event, messageBuilder, pageQueue);
                 } else {
