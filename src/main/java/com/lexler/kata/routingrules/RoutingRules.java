@@ -43,14 +43,14 @@ public class RoutingRules {
             if (context.bound() || context.status().contains(SUBMITTED)) {
                 messageBuilder.append(VERIFIED);
             }
-            String pageQueue = "";
 
             if (context.french()) {
-                pageQueue = config.getProperty("falcon.french.care");
+                String pageQueue = config.getProperty("falcon.french.care");
                 messageBuilder.append(getFrenchPageMessage(context));
                 return returnResult(event, messageBuilder, pageQueue);
             }
 
+            String pageQueue = "";
             //if no exec tags are present in conversation& author, assign based on customerType and pageId
             if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
 
