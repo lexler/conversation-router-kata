@@ -38,11 +38,6 @@ public class RoutingRules {
                 return sendToVipQueue(event, context);
             }
 
-           //check if convo has exec tags put into exec queue according to which exec is mentioned. customer type does not indicate queue in this case.
-            if (!NO_EXEC_MENTION_TAG.equalsIgnoreCase(context.execMention())) {
-                return deleteMeIAmNotUsed(event, context);
-            }
-
             //if no exec tags are present in conversation& author, assign based on customerType and pageId
             if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
                 StringBuilder messageBuilder = new StringBuilder(130);
@@ -189,30 +184,6 @@ public class RoutingRules {
             String defaultQueueId = config.getProperty("falcon.fb.care");
             return new QueueInfo(ERROR_MESSAGE + defaultQueueId, defaultQueueId);
         }
-    }
-
-    private QueueInfo deleteMeIAmNotUsed(BotEvent event, RoutingContext context) {
-        StringBuilder messageBuilder = new StringBuilder(130);
-        //if already bound/or completed bind add verified message to output message
-        if (context.bound() || context.status().contains(SUBMITTED)) {
-            messageBuilder.append(VERIFIED);
-        }
-        String pageQueue = "";
-        log.info(message("Conversation has Exec mention tags.", "getAssignedWorkQueue")
-            .param(EXEC_MENTION, context.execMention())
-            .add(event.toLogContext()));
-
-        if (FALCONAIR.equalsIgnoreCase(context.execMention())) {
-            pageQueue = config.getProperty("falcon.exec.queue");
-            messageBuilder.append(EXEC_MENTION_FALCONAIR);
-        } else if (DUCKWINGS.equalsIgnoreCase(context.execMention())) {
-            pageQueue = config.getProperty("duckwings.exec.queue");
-            messageBuilder.append(EXEC_MENTION_DUCKWINGS);
-        } else if (GR.equalsIgnoreCase(context.execMention())) {
-            pageQueue = config.getProperty("gr.exec.queue");
-            messageBuilder.append(EXEC_MENTION_GR);
-        }
-        return returnResult(event, messageBuilder, pageQueue);
     }
 
     private QueueInfo routeToBot(BotEvent event, RoutingContext context) {
