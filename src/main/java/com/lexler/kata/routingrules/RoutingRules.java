@@ -23,10 +23,7 @@ public class RoutingRules {
     }
 
     public QueueInfo getAssignedWorkQueue(BotEvent event, String conversationId, String requestId, String channelId) {
-        log.info(message("Determining workQueue the conversation belongs to", "getAssignedWorkQueue")
-            .param(CONVERSATION_ID, conversationId)
-            .param(REQUEST_ID, requestId)
-            .param(CHANNEL_ID, channelId));
+        log.info(message("Determining workQueue the conversation belongs to", "getAssignedWorkQueue").add(event.toLogContext()));
 
         String pageQueue = "";
         StringBuilder messageBuilder = new StringBuilder(130);
@@ -37,7 +34,7 @@ public class RoutingRules {
             // route to bot queue if convo is not bound and needs to wait on timer function
             if (!result.bound() && NO_STATUS.equalsIgnoreCase(result.status())) {
                 log.info(message("Conversation is not bound, and status is empty or null. Assigning to the bot queue", "getAssignedWorkQueue")
-                    .param(BIND_STATUS, result.bound())
+                    .param(BIND_STATUS, false)
                     .param(EVENT_STATUS, result.status())
                     .add(event.toLogContext()));
 
