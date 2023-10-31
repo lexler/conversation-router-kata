@@ -27,8 +27,7 @@ public class RoutingRules {
         try {
             RoutingContext context = routingInfo(event, conversationId, requestId, channelId);
 
-            // route to bot queue if convo is not bound and needs to wait on timer function
-            if (!context.bound() && NO_STATUS.equalsIgnoreCase(context.status())) {
+            if (isUnauthedNewConveration(context)) {
                 log.info(message("Conversation is not bound, and status is empty or null. Assigning to the bot queue", "getAssignedWorkQueue")
                     .param(BIND_STATUS, false)
                     .param(EVENT_STATUS, context.status())
@@ -36,14 +35,11 @@ public class RoutingRules {
                 return returnResult(event, new StringBuilder().append(NOT_BOUND_BOT_QUEUE), config.getProperty("bot.queue"));
             }
 
-            //if convo is bound or is timer function event
             log.info(message("Conversation is either bound, bypassed or the timer expired. Assigning it to an agent workQueue.", "getAssignedWorkQueue")
                 .param(BIND_STATUS, context.bound())
                 .param(EVENT_STATUS, context.status())
                 .add(event.toLogContext()));
 
-
-            //check if author has exec tags, put into exec queue according to which author tag is added. customer type does not indicate queue in this case.
             if (authorHasExecTag(context)) {
                 return sendToVipQueue(event, context);
             }
@@ -204,6 +200,10 @@ public class RoutingRules {
             String defaultQueueId = config.getProperty("falcon.fb.care");
             return new QueueInfo(ERROR_MESSAGE + defaultQueueId, defaultQueueId);
         }
+    }
+
+    private boolean isUnauthedNewConveration(RoutingContext context) {
+        return !context.bound() && NO_STATUS.equalsIgnoreCase(context.status());
     }
 
     private QueueInfo sendToVipQueue(BotEvent event, RoutingContext context) {
