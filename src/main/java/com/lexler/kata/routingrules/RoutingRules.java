@@ -83,25 +83,45 @@ public class RoutingRules {
             }
 
             String pageQueue = "";
-            if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
-                if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                    pageQueue = config.getProperty("falcon.instagram.care");
-                    messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
+            if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
+                    if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                        pageQueue = config.getProperty("falcon.instagram.care");
+                        messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
+                    } else {
+                        pageQueue = config.getProperty("falcon.fb.care");
+                        messageBuilder.append(NO_CUSTOMER_BRAND_FB);
+                    }
                 } else {
-                    pageQueue = config.getProperty("falcon.fb.care");
-                    messageBuilder.append(NO_CUSTOMER_BRAND_FB);
+                    if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                        pageQueue = config.getProperty("falcon.instagram.care");
+                        messageBuilder.append(FALCONAIR_CUSTOMER_INSTAGRAM);
+                    } else {
+                        pageQueue = config.getProperty("falcon.fb.care");
+                        messageBuilder.append(FALCONAIR_CUSTOMER_FB);
+                    }
                 }
+                return returnResult(event, messageBuilder, pageQueue);
             } else {
-                if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                    pageQueue = config.getProperty("falcon.instagram.care");
-                    messageBuilder.append(FALCONAIR_CUSTOMER_INSTAGRAM);
+                if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
+                    if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                        pageQueue = config.getProperty("falcon.instagram.care");
+                        messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
+                    } else {
+                        pageQueue = config.getProperty("falcon.fb.care");
+                        messageBuilder.append(NO_CUSTOMER_BRAND_FB);
+                    }
                 } else {
-                    pageQueue = config.getProperty("falcon.fb.care");
-                    messageBuilder.append(FALCONAIR_CUSTOMER_FB);
+                    if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                        pageQueue = config.getProperty("falcon.instagram.care");
+                        messageBuilder.append(FALCONAIR_CUSTOMER_INSTAGRAM);
+                    } else {
+                        pageQueue = config.getProperty("falcon.fb.care");
+                        messageBuilder.append(FALCONAIR_CUSTOMER_FB);
+                    }
                 }
+                return returnResult(event, messageBuilder, pageQueue);
             }
-            return returnResult(event, messageBuilder, pageQueue);
-
 
         } catch (Exception e) {
             log.error(message("An error occurred when trying to assign work queue id. Assigning default values", "getAssignedWorkQueue")
