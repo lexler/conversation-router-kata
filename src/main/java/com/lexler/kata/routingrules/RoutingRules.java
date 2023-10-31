@@ -87,7 +87,7 @@ public class RoutingRules {
                 if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                     pageQueue = config.getProperty("falcon.instagram.care");
                     messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
-                } else {//falcon and fb channel
+                } else {
                     pageQueue = config.getProperty("falcon.fb.care");
                     messageBuilder.append(NO_CUSTOMER_BRAND_FB);
                 }
@@ -95,7 +95,7 @@ public class RoutingRules {
                 if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                     pageQueue = config.getProperty("falcon.instagram.care");
                     messageBuilder.append(FALCONAIR_CUSTOMER_INSTAGRAM);
-                } else {//falcon and fb channel
+                } else {
                     pageQueue = config.getProperty("falcon.fb.care");
                     messageBuilder.append(FALCONAIR_CUSTOMER_FB);
                 }
@@ -107,7 +107,6 @@ public class RoutingRules {
             log.error(message("An error occurred when trying to assign work queue id. Assigning default values", "getAssignedWorkQueue")
                 .param(EVENT, event)
                 .param(EXCEPTION, e.getMessage()));
-            //set default values if any errors assigning work queue above
 
             String defaultQueueId = config.getProperty("falcon.fb.care");
             return new QueueInfo(ERROR_MESSAGE + defaultQueueId, defaultQueueId);
