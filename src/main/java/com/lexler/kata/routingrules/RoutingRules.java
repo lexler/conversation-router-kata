@@ -46,26 +46,11 @@ public class RoutingRules {
             String pageQueue = "";
 
             if (context.french()) {
-                //if no exec tags are present in conversation& author, assign based on customerType and pageId
                 if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
-                    log.info(message("Conversation has no customer brand. Assigning default falconair queue based on network type and pageid.", "getAssignedWorkQueue")
-                        .param(CUSTOMER_BRAND, context.customerBrand())
-                        .add(event.toLogContext()));
-
-                    //this indicated either a failure in LoyaltyHub api call, customer was not found, or we have not reAuthed person yet and no DB info was found
                     pageQueue = config.getProperty("falcon.french.care");
                     messageBuilder.append(NO_CUSTOMER_BRAND_FRENCH_PAGE);
                     return returnResult(event, messageBuilder, pageQueue);
                 } else {
-                    //at this point expecting customer brand and/or bind/status details to be present without exect tags
-                    log.info(message("Checking customer brand.", "getAssignedWorkQueue")
-                        .add(event.toLogContext()));
-
-                    //customer is falconair or prospect (or not in merged loyalty DB yet)
-                    log.info(message("Customer identified as non DuckWings customer", "getAssignedWorkQueue")
-                        .param(EVENT_STATUS, context.status())
-                        .param(CUSTOMER_BRAND, context.customerBrand())
-                        .add(event.toLogContext()));
                     pageQueue = config.getProperty("falcon.french.care");
                     messageBuilder.append(FALCONAIR_CUSTOMER_FRENCH);
                     return returnResult(event, messageBuilder, pageQueue);
@@ -79,10 +64,7 @@ public class RoutingRules {
                         .add(event.toLogContext()));
 
                     //this indicated either a failure in LoyaltyHub api call, customer was not found, or we have not reAuthed person yet and no DB info was found
-                    if (context.french()) {
-                        pageQueue = config.getProperty("falcon.french.care");
-                        messageBuilder.append(NO_CUSTOMER_BRAND_FRENCH_PAGE);
-                    } else if (context.greece()) {
+                    if (context.greece()) {
                         if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                             pageQueue = config.getProperty("gr.instagram");
                             messageBuilder.append(NO_CUSTOMER_BRAND_GR_INSTAGRAM);
@@ -131,10 +113,7 @@ public class RoutingRules {
                         .param(EVENT_STATUS, context.status())
                         .param(CUSTOMER_BRAND, context.customerBrand())
                         .add(event.toLogContext()));
-                    if (context.french()) {
-                        pageQueue = config.getProperty("falcon.french.care");
-                        messageBuilder.append(FALCONAIR_CUSTOMER_FRENCH);
-                    } else if (context.greece() && INSTAGRAM.equalsIgnoreCase(context.network())) {
+                    if (context.greece() && INSTAGRAM.equalsIgnoreCase(context.network())) {
                         pageQueue = config.getProperty("gr.instagram");
                         messageBuilder.append(FALCONAIR_CUSTOMER_GR_INSTAGRAM);
                     } else if (context.greece() && FACEBOOK.equalsIgnoreCase(context.network())) {
