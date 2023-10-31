@@ -74,12 +74,10 @@ public class RoutingRules {
                 String pageQueue = "";
                 if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                     pageQueue = config.getProperty("falcon.instagram.disruption");
-                    messageBuilder.append(DISRUPTION_MENTION);
-                    messageBuilder.append(INSTAGRAM_CHANNEL);
-                } else {//falcon and fb channel
+                    messageBuilder.append(DISRUPTION_MENTION).append(INSTAGRAM_CHANNEL);
+                } else {
                     pageQueue = config.getProperty("falcon.fb.disruption");
-                    messageBuilder.append(DISRUPTION_MENTION);
-                    messageBuilder.append(FACEBOOK_CHANNEL);
+                    messageBuilder.append(DISRUPTION_MENTION).append(FACEBOOK_CHANNEL);
                 }
                 return returnResult(event, messageBuilder, pageQueue);
             }
