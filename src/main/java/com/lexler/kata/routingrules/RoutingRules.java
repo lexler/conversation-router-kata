@@ -36,7 +36,6 @@ public class RoutingRules {
             }
 
             StringBuilder messageBuilder = new StringBuilder(130);
-            //if already bound/or completed bind add verified message to output message
             if (context.bound() || context.status().contains(SUBMITTED)) {
                 messageBuilder.append(VERIFIED);
             }
@@ -80,17 +79,16 @@ public class RoutingRules {
             }
 
             String pageQueue = "";
+            String msg = "";
             if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                 pageQueue = config.getProperty("falcon.instagram.care");
-                String msg = context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand()) ? NO_CUSTOMER_BRAND_INSTAGRAM : FALCONAIR_CUSTOMER_INSTAGRAM;
-                messageBuilder.append(msg);
-                return returnResult(event, messageBuilder, pageQueue);
+                msg = context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand()) ? NO_CUSTOMER_BRAND_INSTAGRAM : FALCONAIR_CUSTOMER_INSTAGRAM;
             } else {
                 pageQueue = config.getProperty("falcon.fb.care");
-                String msg = context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand()) ? NO_CUSTOMER_BRAND_FB : FALCONAIR_CUSTOMER_FB;
-                messageBuilder.append(msg);
-                return returnResult(event, messageBuilder, pageQueue);
+                msg = context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand()) ? NO_CUSTOMER_BRAND_FB : FALCONAIR_CUSTOMER_FB;
             }
+            messageBuilder.append(msg);
+            return returnResult(event, messageBuilder, pageQueue);
 
         } catch (Exception e) {
             log.error(message("An error occurred when trying to assign work queue id. Assigning default values", "getAssignedWorkQueue")
