@@ -64,11 +64,7 @@ public class RoutingRules {
 
             if (context.cyprus()) {
                 String pageQueue = config.getProperty("cy.facebook");
-                if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
-                    messageBuilder.append(NO_CUSTOMER_BRAND_CY_FB);
-                } else {
-                    messageBuilder.append(FALCONAIR_CUSTOMER_CY_FB);
-                }
+                messageBuilder.append(context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand()) ? NO_CUSTOMER_BRAND_CY_FB : FALCONAIR_CUSTOMER_CY_FB);
                 return returnResult(event, messageBuilder, pageQueue);
             }
 
