@@ -240,7 +240,7 @@ public class RoutingRules {
 
     private record RoutingContext(
         boolean bound, String status, String network, String authorTag, boolean french,
-        String execMention, String disruptionTag, String customerBrand, boolean greece,
+        String disruptionTag, String customerBrand, boolean greece,
         boolean cyprus,
         boolean biz
     ) {
@@ -272,11 +272,10 @@ public class RoutingRules {
         boolean bound = customerInfo.bind();
         String status = StringUtils.isEmpty(customerInfo.status()) ? NO_STATUS : customerInfo.status();
         String authorTag = StringUtils.isEmpty(customerInfo.authorExecTag()) ? NO_AUTHOR_EXEC_TAG : customerInfo.authorExecTag();
-        String execMention = StringUtils.isEmpty(customerInfo.execMentionTag()) ? NO_EXEC_MENTION_TAG : customerInfo.execMentionTag();
         String disruptionTag = StringUtils.isEmpty(customerInfo.disruptionMentionTag()) ? NO_DISRUPTION_TAG : customerInfo.disruptionMentionTag();
         String customerBrand = StringUtils.isEmpty(customerInfo.customerBrand()) ? NO_CUSTOMER_BRAND : customerInfo.customerBrand();
         String network = event.coordinate().networkKey();
-        return new RoutingContext(bound, status, network, authorTag, french, execMention, disruptionTag, customerBrand, greece, cyprus, biz);
+        return new RoutingContext(bound, status, network, authorTag, french, disruptionTag, customerBrand, greece, cyprus, biz);
     }
 
     public boolean isFrenchPage(String pageId, String requestId, String conversationId, String channelId) {

@@ -95,10 +95,9 @@ class RoutingRulesAcceptanceTest {
         Boolean[] bindStatuses = new Boolean[]{true, false};
         String[] statuses = new String[]{"", "expired", "submitted", "bypass"};
         String[] authorTags = new String[]{"", "NO_EXEC_MENTION_TAG", "NO_AUTHOR_EXEC_TAG", "FalconAir", "DuckWings", "GR"};
-        String[] execMentionTags = new String[]{"", "FalconAir", "DuckWings", "GR"};
         String[] disruptionTags = new String[]{"NO_DISRUPTION_TAG", "Disruption"};
         CombinationApprovals.verifyAllCombinations(this::callRoutingRules,
-            channelIds, brands, bindStatuses, statuses, authorTags, execMentionTags, disruptionTags);
+            channelIds, brands, bindStatuses, statuses, authorTags, disruptionTags);
     }
 
     private String callRoutingRules(String channelId,
@@ -106,7 +105,6 @@ class RoutingRulesAcceptanceTest {
                                     boolean isBind,
                                     String status,
                                     String authorTag,
-                                    String execMentionTag,
                                     String disruptionTag) {
         String channel = ChannelIdParser.getChannel(channelId);
         String pageId = ChannelIdParser.getPageId(channelId);
@@ -115,7 +113,7 @@ class RoutingRulesAcceptanceTest {
             "500",
             new Coordinate(channel, pageId),
             "200",
-            new CustomerInfo(brand, isBind, status, channel + "_" + pageId + "_200", authorTag, execMentionTag, disruptionTag));
+            new CustomerInfo(brand, isBind, status, channel + "_" + pageId + "_200", authorTag, null, disruptionTag));
         QueueInfo result = routingRules.getAssignedWorkQueue(event, event.conversationId(), event.requestId(), event.channelId());
         return result.queueId();
     }
