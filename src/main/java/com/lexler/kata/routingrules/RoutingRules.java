@@ -35,10 +35,8 @@ public class RoutingRules {
                 return sendToVipQueue(event, context);
             }
 
-            StringBuilder messageBuilder = new StringBuilder(130);
-            if (context.bound() || context.status().contains(SUBMITTED)) {
-                messageBuilder.append(VERIFIED);
-            }
+            String maybeVerifiedMsg = context.bound() || context.status().contains(SUBMITTED) ? VERIFIED : "";
+            StringBuilder messageBuilder = new StringBuilder(130).append(maybeVerifiedMsg);
 
             if (context.french()) {
                 String pageQueue = config.getProperty("falcon.french.care");
