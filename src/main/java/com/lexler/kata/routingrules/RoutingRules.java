@@ -54,30 +54,47 @@ public class RoutingRules {
 
             if (context.greece()) {
                 if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-
-                } else {
-
-                }
-
-                if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
-                    if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                        pageQueue = config.getProperty("gr.instagram");
-                        messageBuilder.append(NO_CUSTOMER_BRAND_GR_INSTAGRAM);
+                    if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
+                        if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                            pageQueue = config.getProperty("gr.instagram");
+                            messageBuilder.append(NO_CUSTOMER_BRAND_GR_INSTAGRAM);
+                        } else {
+                            pageQueue = config.getProperty("gr.facebook");
+                            messageBuilder.append(NO_CUSTOMER_BRAND_GR_FB);
+                        }
+                        return returnResult(event, messageBuilder, pageQueue);
                     } else {
-                        pageQueue = config.getProperty("gr.facebook");
-                        messageBuilder.append(NO_CUSTOMER_BRAND_GR_FB);
+                        if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                            pageQueue = config.getProperty("gr.instagram");
+                            messageBuilder.append(FALCONAIR_CUSTOMER_GR_INSTAGRAM);
+                        } else if (FACEBOOK.equalsIgnoreCase(context.network())) {
+                            pageQueue = config.getProperty("gr.facebook");
+                            messageBuilder.append(FALCONAIR_CUSTOMER_GR_FB);
+                        }
+                        return returnResult(event, messageBuilder, pageQueue);
                     }
-                    return returnResult(event, messageBuilder, pageQueue);
                 } else {
-                    if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                        pageQueue = config.getProperty("gr.instagram");
-                        messageBuilder.append(FALCONAIR_CUSTOMER_GR_INSTAGRAM);
-                    } else if (FACEBOOK.equalsIgnoreCase(context.network())) {
-                        pageQueue = config.getProperty("gr.facebook");
-                        messageBuilder.append(FALCONAIR_CUSTOMER_GR_FB);
+                    if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
+                        if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                            pageQueue = config.getProperty("gr.instagram");
+                            messageBuilder.append(NO_CUSTOMER_BRAND_GR_INSTAGRAM);
+                        } else {
+                            pageQueue = config.getProperty("gr.facebook");
+                            messageBuilder.append(NO_CUSTOMER_BRAND_GR_FB);
+                        }
+                        return returnResult(event, messageBuilder, pageQueue);
+                    } else {
+                        if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                            pageQueue = config.getProperty("gr.instagram");
+                            messageBuilder.append(FALCONAIR_CUSTOMER_GR_INSTAGRAM);
+                        } else if (FACEBOOK.equalsIgnoreCase(context.network())) {
+                            pageQueue = config.getProperty("gr.facebook");
+                            messageBuilder.append(FALCONAIR_CUSTOMER_GR_FB);
+                        }
+                        return returnResult(event, messageBuilder, pageQueue);
                     }
-                    return returnResult(event, messageBuilder, pageQueue);
                 }
+
             } else {
                 //if no exec tags are present in conversation& author, assign based on customerType and pageId
                 if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
