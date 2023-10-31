@@ -103,27 +103,27 @@ public class RoutingRules {
                     }
                     return returnResult(event, messageBuilder, pageQueue);
                 }
-            } else {
-                String pageQueue = "";
-                if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
-                    if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                        pageQueue = config.getProperty("falcon.instagram.care");
-                        messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
-                    } else {//falcon and fb channel
-                        pageQueue = config.getProperty("falcon.fb.care");
-                        messageBuilder.append(NO_CUSTOMER_BRAND_FB);
-                    }
-                    return returnResult(event, messageBuilder, pageQueue);
-                } else {
-                    if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                        pageQueue = config.getProperty("falcon.instagram.care");
-                        messageBuilder.append(FALCONAIR_CUSTOMER_INSTAGRAM);
-                    } else {//falcon and fb channel
-                        pageQueue = config.getProperty("falcon.fb.care");
-                        messageBuilder.append(FALCONAIR_CUSTOMER_FB);
-                    }
-                    return returnResult(event, messageBuilder, pageQueue);
+            }
+
+            String pageQueue = "";
+            if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
+                if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                    pageQueue = config.getProperty("falcon.instagram.care");
+                    messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
+                } else {//falcon and fb channel
+                    pageQueue = config.getProperty("falcon.fb.care");
+                    messageBuilder.append(NO_CUSTOMER_BRAND_FB);
                 }
+                return returnResult(event, messageBuilder, pageQueue);
+            } else {
+                if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                    pageQueue = config.getProperty("falcon.instagram.care");
+                    messageBuilder.append(FALCONAIR_CUSTOMER_INSTAGRAM);
+                } else {//falcon and fb channel
+                    pageQueue = config.getProperty("falcon.fb.care");
+                    messageBuilder.append(FALCONAIR_CUSTOMER_FB);
+                }
+                return returnResult(event, messageBuilder, pageQueue);
             }
 
 
