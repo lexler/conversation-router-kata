@@ -82,15 +82,11 @@ public class RoutingRules {
             String pageQueue = "";
             if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                 if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
-                    if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                        pageQueue = config.getProperty("falcon.instagram.care");
-                        messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
-                    }
+                    pageQueue = config.getProperty("falcon.instagram.care");
+                    messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
                 } else {
-                    if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                        pageQueue = config.getProperty("falcon.instagram.care");
-                        messageBuilder.append(FALCONAIR_CUSTOMER_INSTAGRAM);
-                    }
+                    pageQueue = config.getProperty("falcon.instagram.care");
+                    messageBuilder.append(FALCONAIR_CUSTOMER_INSTAGRAM);
                 }
                 return returnResult(event, messageBuilder, pageQueue);
             } else {
