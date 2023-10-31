@@ -31,9 +31,6 @@ public class RoutingRules {
                 return routeToBot(event, context);
             }
 
-            log.info(message("Conversation is either bound, bypassed or the timer expired. Assigning it to an agent workQueue.", "getAssignedWorkQueue")
-                .param(BIND_STATUS, context.bound()).param(EVENT_STATUS, context.status()).add(event.toLogContext()));
-
             if (authorHasExecTag(context)) {
                 return sendToVipQueue(event, context);
             }
@@ -89,32 +86,28 @@ public class RoutingRules {
                         pageQueue = config.getProperty("falcon.instagram.care");
                         messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
                     } else {
-                        pageQueue = config.getProperty("falcon.fb.care");
-                        messageBuilder.append(NO_CUSTOMER_BRAND_FB);
+
                     }
                 } else {
                     if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                         pageQueue = config.getProperty("falcon.instagram.care");
                         messageBuilder.append(FALCONAIR_CUSTOMER_INSTAGRAM);
                     } else {
-                        pageQueue = config.getProperty("falcon.fb.care");
-                        messageBuilder.append(FALCONAIR_CUSTOMER_FB);
+
                     }
                 }
                 return returnResult(event, messageBuilder, pageQueue);
             } else {
                 if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
                     if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                        pageQueue = config.getProperty("falcon.instagram.care");
-                        messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
+
                     } else {
                         pageQueue = config.getProperty("falcon.fb.care");
                         messageBuilder.append(NO_CUSTOMER_BRAND_FB);
                     }
                 } else {
                     if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                        pageQueue = config.getProperty("falcon.instagram.care");
-                        messageBuilder.append(FALCONAIR_CUSTOMER_INSTAGRAM);
+
                     } else {
                         pageQueue = config.getProperty("falcon.fb.care");
                         messageBuilder.append(FALCONAIR_CUSTOMER_FB);
