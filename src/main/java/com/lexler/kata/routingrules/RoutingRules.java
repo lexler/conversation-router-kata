@@ -226,17 +226,10 @@ public class RoutingRules {
     }
 
     private record RoutingInfo(
-        boolean french,
-        boolean greece,
+        boolean bound, String status, String network, String authorTag, boolean french,
+        String execMention, String disruptionTag, String customerBrand, boolean greece,
         boolean cyprus,
-        boolean biz,
-        boolean bound,
-        String status,
-        String authorTag,
-        String execMention,
-        String disruptionTag,
-        String customerBrand,
-        String network
+        boolean biz
     ) {
     }
 
@@ -270,7 +263,7 @@ public class RoutingRules {
         String disruptionTag = StringUtils.isEmpty(customerInfo.disruptionMentionTag()) ? NO_DISRUPTION_TAG : customerInfo.disruptionMentionTag();
         String customerBrand = StringUtils.isEmpty(customerInfo.customerBrand()) ? NO_CUSTOMER_BRAND : customerInfo.customerBrand();
         String network = event.coordinate().networkKey();
-        return new RoutingInfo(french, greece, cyprus, biz, bound, status, authorTag, execMention, disruptionTag, customerBrand, network);
+        return new RoutingInfo(bound, status, network, authorTag, french, execMention, disruptionTag, customerBrand, greece, cyprus, biz);
     }
 
     public boolean isFrenchPage(String pageId, String requestId, String conversationId, String channelId) {
