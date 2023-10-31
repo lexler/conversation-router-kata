@@ -66,13 +66,12 @@ public class RoutingRules {
                 String pageQueue = config.getProperty("cy.facebook");
                 if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
                     messageBuilder.append(NO_CUSTOMER_BRAND_CY_FB);
-                    return returnResult(event, messageBuilder, pageQueue);
                 } else {
                     if (FACEBOOK.equalsIgnoreCase(context.network())) {
                         messageBuilder.append(FALCONAIR_CUSTOMER_CY_FB);
                     }
-                    return returnResult(event, messageBuilder, pageQueue);
                 }
+                return returnResult(event, messageBuilder, pageQueue);
             }
 
             String pageQueue = "";
