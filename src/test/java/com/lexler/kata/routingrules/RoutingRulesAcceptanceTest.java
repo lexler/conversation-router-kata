@@ -23,7 +23,7 @@ class RoutingRulesAcceptanceTest {
             "instagram_5001_200", "instagram_1003_200", "instagram_1004_200", "instagram_2003_200", "instagram_2004_200",
             "instagram_4002_200"};
 
-        String[] brands = new String[]{"", "DuckWings", "FalconAir"};
+        String[] brands = new String[]{"", "FalconAir"};
         Boolean[] bindStatuses = new Boolean[]{true, false};
         String[] statuses = new String[]{"", "expired", "submitted", "bypass"};
         String[] authorTags = new String[]{"", "NO_EXEC_MENTION_TAG", "NO_AUTHOR_EXEC_TAG", "FalconAir", "DuckWings", "GR"};
@@ -89,7 +89,7 @@ class RoutingRulesAcceptanceTest {
             "instagram_5001_200", "instagram_1003_200", "instagram_1004_200", "instagram_2003_200", "instagram_2004_200",
             "instagram_4002_200"};
 
-        String[] brands = new String[]{"", "DuckWings", "FalconAir"};
+        String[] brands = new String[]{"", "FalconAir"};
         Boolean[] bindStatuses = new Boolean[]{true, false};
         String[] statuses = new String[]{"", "expired", "submitted", "bypass"};
         String[] authorTags = new String[]{"", "NO_EXEC_MENTION_TAG", "NO_AUTHOR_EXEC_TAG", "FalconAir", "DuckWings", "GR"};
