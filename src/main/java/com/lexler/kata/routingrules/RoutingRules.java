@@ -46,15 +46,15 @@ public class RoutingRules {
             String pageQueue = "";
 
             if (context.french()) {
+                pageQueue = config.getProperty("falcon.french.care");
+                String msg = "";
                 if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
-                    pageQueue = config.getProperty("falcon.french.care");
-                    messageBuilder.append(NO_CUSTOMER_BRAND_FRENCH_PAGE);
-                    return returnResult(event, messageBuilder, pageQueue);
+                    msg = NO_CUSTOMER_BRAND_FRENCH_PAGE;
                 } else {
-                    pageQueue = config.getProperty("falcon.french.care");
-                    messageBuilder.append(FALCONAIR_CUSTOMER_FRENCH);
-                    return returnResult(event, messageBuilder, pageQueue);
+                    msg = FALCONAIR_CUSTOMER_FRENCH;
                 }
+                messageBuilder.append(msg);
+                return returnResult(event, messageBuilder, pageQueue);
             } else {
                 //if no exec tags are present in conversation& author, assign based on customerType and pageId
                 if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
