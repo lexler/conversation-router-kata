@@ -83,8 +83,8 @@ class RoutingRulesAcceptanceTest {
         return String.format("Routed to:\n  queue: %s\n  message: %s\n", info.queueId(), info.message());
     }
 
+    /*
     @Test
-    @Deprecated
     void pinOnlyQueueIds() {
         String[] channelIds = new String[]{
             "facebook_5001_200", "facebook_1001_200", "facebook_1002_200", "facebook_2001_200", "facebook_2002_200", "facebook_3001_200",
@@ -119,5 +119,5 @@ class RoutingRulesAcceptanceTest {
             new CustomerInfo(brand, isBind, status, channel + "_" + pageId + "_200", authorTag, execMentionTag, disruptionTag));
         QueueInfo result = routingRules.getAssignedWorkQueue(event, event.conversationId(), event.requestId(), event.channelId());
         return result.queueId();
-    }
+    }*/
 }

@@ -40,6 +40,7 @@ public class RoutingRules {
 
                 pageQueue = config.getProperty("bot.queue");
                 messageBuilder.append(NOT_BOUND_BOT_QUEUE);
+                return returnResult(event, messageBuilder, pageQueue);
 
                 //if convo is bound or is timer function event
             } else if ((result.bound() || result.status().contains(EXPIRED) || result.status().contains(SUBMITTED) || result.status().contains(BYPASS))) {
