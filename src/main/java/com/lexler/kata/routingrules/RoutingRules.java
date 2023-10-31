@@ -50,19 +50,20 @@ public class RoutingRules {
                 return returnResult(event, messageBuilder, pageQueue);
             }
 
-            String pageQueue = "";
 
             if (context.greece()) {
                 if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                    pageQueue = config.getProperty("gr.instagram");
+                    String pageQueue = config.getProperty("gr.instagram");
                     messageBuilder.append(getGreeceInstagramMsg(context));
                     return returnResult(event, messageBuilder, pageQueue);
                 } else {
-                    pageQueue = config.getProperty("gr.facebook");
+                    String pageQueue = config.getProperty("gr.facebook");
                     messageBuilder.append(getGreeceFbMsg(context));
                     return returnResult(event, messageBuilder, pageQueue);
                 }
             }
+
+            String pageQueue = "";
 
             //if no exec tags are present in conversation& author, assign based on customerType and pageId
             if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
