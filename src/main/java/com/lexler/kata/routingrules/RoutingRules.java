@@ -78,18 +78,12 @@ public class RoutingRules {
                             pageQueue = config.getProperty("falcon.instagram.disruption");
                             messageBuilder.append(DISRUPTION_MENTION);
                             messageBuilder.append(INSTAGRAM_CHANNEL);
-                        } else {
-                            pageQueue = config.getProperty("falcon.instagram.care");
-                            messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
                         }
                     } else {//falcon and fb channel
                         if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
                             pageQueue = config.getProperty("falcon.fb.disruption");
                             messageBuilder.append(DISRUPTION_MENTION);
                             messageBuilder.append(FACEBOOK_CHANNEL);
-                        } else {
-                            pageQueue = config.getProperty("falcon.fb.care");
-                            messageBuilder.append(NO_CUSTOMER_BRAND_FB);
                         }
                     }
                     return returnResult(event, messageBuilder, pageQueue);
@@ -99,21 +93,13 @@ public class RoutingRules {
                             pageQueue = config.getProperty("falcon.instagram.disruption");
                             messageBuilder.append(DISRUPTION_MENTION);
                             messageBuilder.append(INSTAGRAM_CHANNEL);
-                        } else {
-                            pageQueue = config.getProperty("falcon.instagram.care");
-                            messageBuilder.append(FALCONAIR_CUSTOMER_INSTAGRAM);
                         }
-
                     } else {//falcon and fb channel
                         if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
                             pageQueue = config.getProperty("falcon.fb.disruption");
                             messageBuilder.append(DISRUPTION_MENTION);
                             messageBuilder.append(FACEBOOK_CHANNEL);
-                        } else {
-                            pageQueue = config.getProperty("falcon.fb.care");
-                            messageBuilder.append(FALCONAIR_CUSTOMER_FB);
                         }
-
                     }
                     return returnResult(event, messageBuilder, pageQueue);
                 }
