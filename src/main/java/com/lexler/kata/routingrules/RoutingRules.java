@@ -50,7 +50,6 @@ public class RoutingRules {
                 return returnResult(event, messageBuilder, pageQueue);
             }
 
-
             if (context.greece()) {
                 if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                     String pageQueue = config.getProperty("gr.instagram");
@@ -65,14 +64,7 @@ public class RoutingRules {
 
             String pageQueue = "";
 
-            //if no exec tags are present in conversation& author, assign based on customerType and pageId
             if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
-
-                log.info(message("Conversation has no customer brand. Assigning default falconair queue based on network type and pageid.", "getAssignedWorkQueue")
-                    .param(CUSTOMER_BRAND, context.customerBrand())
-                    .add(event.toLogContext()));
-
-                //this indicated either a failure in LoyaltyHub api call, customer was not found, or we have not reAuthed person yet and no DB info was found
                 if (context.cyprus()) {
                     pageQueue = config.getProperty("cy.facebook");
                     messageBuilder.append(NO_CUSTOMER_BRAND_CY_FB);
@@ -97,15 +89,6 @@ public class RoutingRules {
                 }
                 return returnResult(event, messageBuilder, pageQueue);
             } else {
-                //at this point expecting customer brand and/or bind/status details to be present without exect tags
-                log.info(message("Checking customer brand.", "getAssignedWorkQueue")
-                    .add(event.toLogContext()));
-
-                //customer is falconair or prospect (or not in merged loyalty DB yet)
-                log.info(message("Customer identified as non DuckWings customer", "getAssignedWorkQueue")
-                    .param(EVENT_STATUS, context.status())
-                    .param(CUSTOMER_BRAND, context.customerBrand())
-                    .add(event.toLogContext()));
                 if (context.cyprus() && FACEBOOK.equalsIgnoreCase(context.network())) {
                     pageQueue = config.getProperty("cy.facebook");
                     messageBuilder.append(FALCONAIR_CUSTOMER_CY_FB);
