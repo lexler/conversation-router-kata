@@ -58,22 +58,20 @@ public class RoutingRules {
                     String msg;
                     if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
                         msg = NO_CUSTOMER_BRAND_GR_INSTAGRAM;
-                        messageBuilder.append(msg);
                     } else {
                         msg = FALCONAIR_CUSTOMER_GR_INSTAGRAM;
-                        messageBuilder.append(msg);
                     }
+                    messageBuilder.append(msg);
                     return returnResult(event, messageBuilder, pageQueue);
                 } else {
                     pageQueue = config.getProperty("gr.facebook");
                     String msg;
                     if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
                         msg = NO_CUSTOMER_BRAND_GR_FB;
-                        messageBuilder.append(msg);
                     } else {
                         msg = FALCONAIR_CUSTOMER_GR_FB;
-                        messageBuilder.append(msg);
                     }
+                    messageBuilder.append(msg);
                     return returnResult(event, messageBuilder, pageQueue);
                 }
 
