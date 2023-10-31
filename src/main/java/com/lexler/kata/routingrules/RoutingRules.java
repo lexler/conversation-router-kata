@@ -38,17 +38,20 @@ public class RoutingRules {
                 return sendToVipQueue(event, context);
             }
 
+            StringBuilder messageBuilder = new StringBuilder(130);
+            //if already bound/or completed bind add verified message to output message
+            if (context.bound() || context.status().contains(SUBMITTED)) {
+                messageBuilder.append(VERIFIED);
+            }
+            String pageQueue = "";
+
             //if no exec tags are present in conversation& author, assign based on customerType and pageId
             if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
-                StringBuilder messageBuilder = new StringBuilder(130);
-                //if already bound/or completed bind add verified message to output message
-                if (context.bound() || context.status().contains(SUBMITTED)) {
-                    messageBuilder.append(VERIFIED);
-                }
-                String pageQueue = "";
+
                 log.info(message("Conversation has no customer brand. Assigning default falconair queue based on network type and pageid.", "getAssignedWorkQueue")
                     .param(CUSTOMER_BRAND, context.customerBrand())
                     .add(event.toLogContext()));
+
                 //this indicated either a failure in LoyaltyHub api call, customer was not found, or we have not reAuthed person yet and no DB info was found
                 if (context.french()) {
                     pageQueue = config.getProperty("falcon.french.care");
@@ -94,12 +97,6 @@ public class RoutingRules {
                 return returnResult(event, messageBuilder, pageQueue);
             } else {
                 //at this point expecting customer brand and/or bind/status details to be present without exect tags
-                StringBuilder messageBuilder = new StringBuilder(130);
-                //if already bound/or completed bind add verified message to output message
-                if (context.bound() || context.status().contains(SUBMITTED)) {
-                    messageBuilder.append(VERIFIED);
-                }
-                String pageQueue = "";
                 log.info(message("Checking customer brand.", "getAssignedWorkQueue")
                     .add(event.toLogContext()));
 
