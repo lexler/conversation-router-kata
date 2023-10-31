@@ -55,104 +55,95 @@ public class RoutingRules {
             if (context.greece()) {
                 if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                     pageQueue = config.getProperty("gr.instagram");
-                    String msg = context.customerBrand().isEmpty() ||
-                        NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand()) ?
-                        NO_CUSTOMER_BRAND_GR_INSTAGRAM :
-                        FALCONAIR_CUSTOMER_GR_INSTAGRAM;
-                    messageBuilder.append(msg);
+                    messageBuilder.append(getGreeceInstagramMsg(context));
                     return returnResult(event, messageBuilder, pageQueue);
                 } else {
                     pageQueue = config.getProperty("gr.facebook");
-                    String msg = context.customerBrand().isEmpty() ||
-                        NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand()) ?
-                        NO_CUSTOMER_BRAND_GR_FB :
-                        FALCONAIR_CUSTOMER_GR_FB;
-                    messageBuilder.append(msg);
+                    messageBuilder.append(getGreeceFbMsg(context));
                     return returnResult(event, messageBuilder, pageQueue);
                 }
+            }
 
-            } else {
-                //if no exec tags are present in conversation& author, assign based on customerType and pageId
-                if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
+            //if no exec tags are present in conversation& author, assign based on customerType and pageId
+            if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
 
-                    log.info(message("Conversation has no customer brand. Assigning default falconair queue based on network type and pageid.", "getAssignedWorkQueue")
-                        .param(CUSTOMER_BRAND, context.customerBrand())
-                        .add(event.toLogContext()));
+                log.info(message("Conversation has no customer brand. Assigning default falconair queue based on network type and pageid.", "getAssignedWorkQueue")
+                    .param(CUSTOMER_BRAND, context.customerBrand())
+                    .add(event.toLogContext()));
 
-                    //this indicated either a failure in LoyaltyHub api call, customer was not found, or we have not reAuthed person yet and no DB info was found
-                    if (context.cyprus()) {
-                        pageQueue = config.getProperty("cy.facebook");
-                        messageBuilder.append(NO_CUSTOMER_BRAND_CY_FB);
-                    } else if (context.biz()) {
-                        if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                            pageQueue = config.getProperty("biz.instagram");
-                            messageBuilder.append(NO_CUSTOMER_BRAND_BIZ_INSTAGRAM);
-                        } else {
-                            pageQueue = config.getProperty("biz.facebook");
-                            messageBuilder.append(NO_CUSTOMER_BRAND_BIZ_FB);
-                        }
-                    } else if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-                            pageQueue = config.getProperty("falcon.instagram.disruption");
-                            messageBuilder.append(DISRUPTION_MENTION);
-                            messageBuilder.append(INSTAGRAM_CHANNEL);
-                        } else {
-                            pageQueue = config.getProperty("falcon.instagram.care");
-                            messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
-                        }
-                    } else {//falcon and fb channel
-                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-                            pageQueue = config.getProperty("falcon.fb.disruption");
-                            messageBuilder.append(DISRUPTION_MENTION);
-                            messageBuilder.append(FACEBOOK_CHANNEL);
-                        } else {
-                            pageQueue = config.getProperty("falcon.fb.care");
-                            messageBuilder.append(NO_CUSTOMER_BRAND_FB);
-                        }
-                    }
-                    return returnResult(event, messageBuilder, pageQueue);
-                } else {
-                    //at this point expecting customer brand and/or bind/status details to be present without exect tags
-                    log.info(message("Checking customer brand.", "getAssignedWorkQueue")
-                        .add(event.toLogContext()));
-
-                    //customer is falconair or prospect (or not in merged loyalty DB yet)
-                    log.info(message("Customer identified as non DuckWings customer", "getAssignedWorkQueue")
-                        .param(EVENT_STATUS, context.status())
-                        .param(CUSTOMER_BRAND, context.customerBrand())
-                        .add(event.toLogContext()));
-                    if (context.cyprus() && FACEBOOK.equalsIgnoreCase(context.network())) {
-                        pageQueue = config.getProperty("cy.facebook");
-                        messageBuilder.append(FALCONAIR_CUSTOMER_CY_FB);
-                    } else if (context.biz() && FACEBOOK.equalsIgnoreCase(context.network())) {
-                        pageQueue = config.getProperty("biz.facebook");
-                        messageBuilder.append(FALCONAIR_CUSTOMER_BIZ_FB);
-                    } else if (context.biz() && INSTAGRAM.equalsIgnoreCase(context.network())) {
+                //this indicated either a failure in LoyaltyHub api call, customer was not found, or we have not reAuthed person yet and no DB info was found
+                if (context.cyprus()) {
+                    pageQueue = config.getProperty("cy.facebook");
+                    messageBuilder.append(NO_CUSTOMER_BRAND_CY_FB);
+                } else if (context.biz()) {
+                    if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                         pageQueue = config.getProperty("biz.instagram");
-                        messageBuilder.append(FALCONAIR_CUSTOMER_BIZ_INSTAGRAM);
-                    } else if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-                            pageQueue = config.getProperty("falcon.instagram.disruption");
-                            messageBuilder.append(DISRUPTION_MENTION);
-                            messageBuilder.append(INSTAGRAM_CHANNEL);
-                        } else {
-                            pageQueue = config.getProperty("falcon.instagram.care");
-                            messageBuilder.append(FALCONAIR_CUSTOMER_INSTAGRAM);
-                        }
-
-                    } else {//falcon and fb channel
-                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-                            pageQueue = config.getProperty("falcon.fb.disruption");
-                            messageBuilder.append(DISRUPTION_MENTION);
-                            messageBuilder.append(FACEBOOK_CHANNEL);
-                        } else {
-                            pageQueue = config.getProperty("falcon.fb.care");
-                            messageBuilder.append(FALCONAIR_CUSTOMER_FB);
-                        }
-
+                        messageBuilder.append(NO_CUSTOMER_BRAND_BIZ_INSTAGRAM);
+                    } else {
+                        pageQueue = config.getProperty("biz.facebook");
+                        messageBuilder.append(NO_CUSTOMER_BRAND_BIZ_FB);
                     }
-                    return returnResult(event, messageBuilder, pageQueue);
+                } else if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                    if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
+                        pageQueue = config.getProperty("falcon.instagram.disruption");
+                        messageBuilder.append(DISRUPTION_MENTION);
+                        messageBuilder.append(INSTAGRAM_CHANNEL);
+                    } else {
+                        pageQueue = config.getProperty("falcon.instagram.care");
+                        messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
+                    }
+                } else {//falcon and fb channel
+                    if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
+                        pageQueue = config.getProperty("falcon.fb.disruption");
+                        messageBuilder.append(DISRUPTION_MENTION);
+                        messageBuilder.append(FACEBOOK_CHANNEL);
+                    } else {
+                        pageQueue = config.getProperty("falcon.fb.care");
+                        messageBuilder.append(NO_CUSTOMER_BRAND_FB);
+                    }
                 }
+                return returnResult(event, messageBuilder, pageQueue);
+            } else {
+                //at this point expecting customer brand and/or bind/status details to be present without exect tags
+                log.info(message("Checking customer brand.", "getAssignedWorkQueue")
+                    .add(event.toLogContext()));
+
+                //customer is falconair or prospect (or not in merged loyalty DB yet)
+                log.info(message("Customer identified as non DuckWings customer", "getAssignedWorkQueue")
+                    .param(EVENT_STATUS, context.status())
+                    .param(CUSTOMER_BRAND, context.customerBrand())
+                    .add(event.toLogContext()));
+                if (context.cyprus() && FACEBOOK.equalsIgnoreCase(context.network())) {
+                    pageQueue = config.getProperty("cy.facebook");
+                    messageBuilder.append(FALCONAIR_CUSTOMER_CY_FB);
+                } else if (context.biz() && FACEBOOK.equalsIgnoreCase(context.network())) {
+                    pageQueue = config.getProperty("biz.facebook");
+                    messageBuilder.append(FALCONAIR_CUSTOMER_BIZ_FB);
+                } else if (context.biz() && INSTAGRAM.equalsIgnoreCase(context.network())) {
+                    pageQueue = config.getProperty("biz.instagram");
+                    messageBuilder.append(FALCONAIR_CUSTOMER_BIZ_INSTAGRAM);
+                } else if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                    if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
+                        pageQueue = config.getProperty("falcon.instagram.disruption");
+                        messageBuilder.append(DISRUPTION_MENTION);
+                        messageBuilder.append(INSTAGRAM_CHANNEL);
+                    } else {
+                        pageQueue = config.getProperty("falcon.instagram.care");
+                        messageBuilder.append(FALCONAIR_CUSTOMER_INSTAGRAM);
+                    }
+
+                } else {//falcon and fb channel
+                    if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
+                        pageQueue = config.getProperty("falcon.fb.disruption");
+                        messageBuilder.append(DISRUPTION_MENTION);
+                        messageBuilder.append(FACEBOOK_CHANNEL);
+                    } else {
+                        pageQueue = config.getProperty("falcon.fb.care");
+                        messageBuilder.append(FALCONAIR_CUSTOMER_FB);
+                    }
+
+                }
+                return returnResult(event, messageBuilder, pageQueue);
             }
 
         } catch (Exception e) {
@@ -164,6 +155,20 @@ public class RoutingRules {
             String defaultQueueId = config.getProperty("falcon.fb.care");
             return new QueueInfo(ERROR_MESSAGE + defaultQueueId, defaultQueueId);
         }
+    }
+
+    private String getGreeceFbMsg(RoutingContext context) {
+        return context.customerBrand().isEmpty() ||
+            NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand()) ?
+            NO_CUSTOMER_BRAND_GR_FB :
+            FALCONAIR_CUSTOMER_GR_FB;
+    }
+
+    private String getGreeceInstagramMsg(RoutingContext context) {
+        return context.customerBrand().isEmpty() ||
+            NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand()) ?
+            NO_CUSTOMER_BRAND_GR_INSTAGRAM :
+            FALCONAIR_CUSTOMER_GR_INSTAGRAM;
     }
 
     private String getFrenchPageMessage(RoutingContext context) {
