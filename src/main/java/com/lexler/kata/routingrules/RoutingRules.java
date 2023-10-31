@@ -55,20 +55,13 @@ public class RoutingRules {
             if (context.greece()) {
                 //if no exec tags are present in conversation& author, assign based on customerType and pageId
                 if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
-
-                    log.info(message("Conversation has no customer brand. Assigning default falconair queue based on network type and pageid.", "getAssignedWorkQueue")
-                        .param(CUSTOMER_BRAND, context.customerBrand())
-                        .add(event.toLogContext()));
-
                     //this indicated either a failure in LoyaltyHub api call, customer was not found, or we have not reAuthed person yet and no DB info was found
-                    if (context.greece()) {
-                        if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                            pageQueue = config.getProperty("gr.instagram");
-                            messageBuilder.append(NO_CUSTOMER_BRAND_GR_INSTAGRAM);
-                        } else {
-                            pageQueue = config.getProperty("gr.facebook");
-                            messageBuilder.append(NO_CUSTOMER_BRAND_GR_FB);
-                        }
+                    if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                        pageQueue = config.getProperty("gr.instagram");
+                        messageBuilder.append(NO_CUSTOMER_BRAND_GR_INSTAGRAM);
+                    } else {
+                        pageQueue = config.getProperty("gr.facebook");
+                        messageBuilder.append(NO_CUSTOMER_BRAND_GR_FB);
                     }
                     return returnResult(event, messageBuilder, pageQueue);
                 } else {
