@@ -81,22 +81,12 @@ public class RoutingRules {
 
             String pageQueue = "";
             if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
-                    pageQueue = config.getProperty("falcon.instagram.care");
-                    messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
-                } else {
-                    pageQueue = config.getProperty("falcon.instagram.care");
-                    messageBuilder.append(FALCONAIR_CUSTOMER_INSTAGRAM);
-                }
+                pageQueue = config.getProperty("falcon.instagram.care");
+                messageBuilder.append(context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand()) ? NO_CUSTOMER_BRAND_INSTAGRAM : FALCONAIR_CUSTOMER_INSTAGRAM);
                 return returnResult(event, messageBuilder, pageQueue);
             } else {
-                if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
-                    pageQueue = config.getProperty("falcon.fb.care");
-                    messageBuilder.append(NO_CUSTOMER_BRAND_FB);
-                } else {
-                    pageQueue = config.getProperty("falcon.fb.care");
-                    messageBuilder.append(FALCONAIR_CUSTOMER_FB);
-                }
+                pageQueue = config.getProperty("falcon.fb.care");
+                messageBuilder.append(context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand()) ? NO_CUSTOMER_BRAND_FB : FALCONAIR_CUSTOMER_FB);
                 return returnResult(event, messageBuilder, pageQueue);
             }
 
