@@ -70,6 +70,12 @@ public class RoutingRules {
                 return returnResult(event, messageBuilder, pageQueue);
             }
 
+            if (true) {
+
+            } else {
+
+            }
+
             String pageQueue = "";
             if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
                 if (INSTAGRAM.equalsIgnoreCase(context.network())) {
