@@ -45,8 +45,8 @@ public class RoutingRules {
             }
             String pageQueue = "";
 
-            if (true) {
-//if no exec tags are present in conversation& author, assign based on customerType and pageId
+            if (context.french()) {
+                //if no exec tags are present in conversation& author, assign based on customerType and pageId
                 if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
 
                     log.info(message("Conversation has no customer brand. Assigning default falconair queue based on network type and pageid.", "getAssignedWorkQueue")
@@ -148,7 +148,7 @@ public class RoutingRules {
                     return returnResult(event, messageBuilder, pageQueue);
                 }
             } else {
-//if no exec tags are present in conversation& author, assign based on customerType and pageId
+                //if no exec tags are present in conversation& author, assign based on customerType and pageId
                 if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
 
                     log.info(message("Conversation has no customer brand. Assigning default falconair queue based on network type and pageid.", "getAssignedWorkQueue")
