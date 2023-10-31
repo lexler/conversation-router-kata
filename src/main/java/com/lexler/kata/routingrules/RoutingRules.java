@@ -54,21 +54,23 @@ public class RoutingRules {
 
             if (context.greece()) {
                 if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                    pageQueue = config.getProperty("gr.instagram");
                     if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
-                        pageQueue = config.getProperty("gr.instagram");
-                        messageBuilder.append(NO_CUSTOMER_BRAND_GR_INSTAGRAM);
+                        String msg = NO_CUSTOMER_BRAND_GR_INSTAGRAM;
+                        messageBuilder.append(msg);
                     } else {
-                        pageQueue = config.getProperty("gr.instagram");
-                        messageBuilder.append(FALCONAIR_CUSTOMER_GR_INSTAGRAM);
+                        String msg = FALCONAIR_CUSTOMER_GR_INSTAGRAM;
+                        messageBuilder.append(msg);
                     }
                     return returnResult(event, messageBuilder, pageQueue);
                 } else {
+                    pageQueue = config.getProperty("gr.facebook");
                     if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
-                        pageQueue = config.getProperty("gr.facebook");
-                        messageBuilder.append(NO_CUSTOMER_BRAND_GR_FB);
+                        String msg = NO_CUSTOMER_BRAND_GR_FB;
+                        messageBuilder.append(msg);
                     } else {
-                        pageQueue = config.getProperty("gr.facebook");
-                        messageBuilder.append(FALCONAIR_CUSTOMER_GR_FB);
+                        String msg = FALCONAIR_CUSTOMER_GR_FB;
+                        messageBuilder.append(msg);
                     }
                     return returnResult(event, messageBuilder, pageQueue);
                 }
