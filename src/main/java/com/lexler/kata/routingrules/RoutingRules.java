@@ -26,76 +26,106 @@ public class RoutingRules {
         log.info(message("Determining workQueue the conversation belongs to", "getAssignedWorkQueue").add(event.toLogContext()));
         try {
             RoutingContext context = routingInfo(event, conversationId, requestId, channelId);
-
             if (isUnauthedNewConveration(context)) {
                 return routeToBot(event, context);
             }
-
-            if (authorHasExecTag(context)) {
-                return sendToVipQueue(event, context);
-            }
-
-            String maybeVerifiedMsg = context.bound() || context.status().contains(SUBMITTED) ? VERIFIED : "";
-            StringBuilder messageBuilder = new StringBuilder(130).append(maybeVerifiedMsg);
-
-            if (context.french()) {
-                String pageQueue = config.getProperty("falcon.french.care");
-                messageBuilder.append(getFrenchPageMessage(context));
-                return returnResult(event, messageBuilder, pageQueue);
-            }
-
-            if (context.greece()) {
-                if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                    String pageQueue = config.getProperty("gr.instagram");
-                    messageBuilder.append(getGreeceInstagramMsg(context));
-                    return returnResult(event, messageBuilder, pageQueue);
-                } else {
-                    String pageQueue = config.getProperty("gr.facebook");
-                    messageBuilder.append(getGreeceFbMsg(context));
-                    return returnResult(event, messageBuilder, pageQueue);
-                }
-            }
-
-            if (context.cyprus()) {
-                String pageQueue = config.getProperty("cy.facebook");
-                String cyprusMsg = context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand()) ?
-                    NO_CUSTOMER_BRAND_CY_FB : FALCONAIR_CUSTOMER_CY_FB;
-                messageBuilder.append(cyprusMsg);
-                return returnResult(event, messageBuilder, pageQueue);
-            }
-
-            if (context.disruptionTag().equalsIgnoreCase(DISRUPTION)) {
-                String pageQueue = "";
-                if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                    pageQueue = config.getProperty("falcon.instagram.disruption");
-                    messageBuilder.append(DISRUPTION_MENTION).append(INSTAGRAM_CHANNEL);
-                } else {
-                    pageQueue = config.getProperty("falcon.fb.disruption");
-                    messageBuilder.append(DISRUPTION_MENTION).append(FACEBOOK_CHANNEL);
-                }
-                return returnResult(event, messageBuilder, pageQueue);
-            }
-
-            String pageQueue = "";
-            String msg = "";
-            if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                pageQueue = config.getProperty("falcon.instagram.care");
-                msg = context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand()) ? NO_CUSTOMER_BRAND_INSTAGRAM : FALCONAIR_CUSTOMER_INSTAGRAM;
-            } else {
-                pageQueue = config.getProperty("falcon.fb.care");
-                msg = context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand()) ? NO_CUSTOMER_BRAND_FB : FALCONAIR_CUSTOMER_FB;
-            }
-            messageBuilder.append(msg);
-            return returnResult(event, messageBuilder, pageQueue);
+            return routeToAgent(event, context);
 
         } catch (Exception e) {
             log.error(message("An error occurred when trying to assign work queue id. Assigning default values", "getAssignedWorkQueue")
                 .param(EVENT, event)
                 .param(EXCEPTION, e.getMessage()));
-
-            String defaultQueueId = config.getProperty("falcon.fb.care");
-            return new QueueInfo(ERROR_MESSAGE + defaultQueueId, defaultQueueId);
+            return routeToDefaultQueue();
         }
+    }
+
+    private QueueInfo routeToAgent(BotEvent event, RoutingContext context) {
+        if (authorHasExecTag(context)) {
+            return sendToVipQueue(event, context);
+        }
+
+        String maybeVerifiedMsg = context.bound() || context.status().contains(SUBMITTED) ? VERIFIED : "";
+        StringBuilder messageBuilder = new StringBuilder(130)
+            .append(maybeVerifiedMsg);
+
+        if (context.french()) {
+            return routeToFrenchQueue(event, messageBuilder, context);
+        }
+
+        if (context.greece()) {
+            return routeToGreeceQueue(event, context, messageBuilder);
+        }
+
+        if (context.cyprus()) {
+            return routeToCyprusPage(event, context, messageBuilder);
+        }
+
+        if (hasDisruptionTag(context)) {
+            return routeToSpecialCaseQueue(event, context, messageBuilder);
+        }
+
+        return routeByDefault(event, context, messageBuilder);
+    }
+
+    private QueueInfo routeToDefaultQueue() {
+        String defaultQueueId = config.getProperty("falcon.fb.care");
+        return new QueueInfo(ERROR_MESSAGE + defaultQueueId, defaultQueueId);
+    }
+
+    private QueueInfo routeByDefault(BotEvent event, RoutingContext context, StringBuilder messageBuilder) {
+        String pageQueue = "";
+        String msg = "";
+        if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+            pageQueue = config.getProperty("falcon.instagram.care");
+            msg = context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand()) ? NO_CUSTOMER_BRAND_INSTAGRAM : FALCONAIR_CUSTOMER_INSTAGRAM;
+        } else {
+            pageQueue = config.getProperty("falcon.fb.care");
+            msg = context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand()) ? NO_CUSTOMER_BRAND_FB : FALCONAIR_CUSTOMER_FB;
+        }
+        messageBuilder.append(msg);
+        return returnResult(event, messageBuilder, pageQueue);
+    }
+
+    private boolean hasDisruptionTag(RoutingContext context) {
+        return context.disruptionTag().equalsIgnoreCase(DISRUPTION);
+    }
+
+    private QueueInfo routeToSpecialCaseQueue(BotEvent event, RoutingContext context, StringBuilder messageBuilder) {
+        String pageQueue = "";
+        if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+            pageQueue = config.getProperty("falcon.instagram.disruption");
+            messageBuilder.append(DISRUPTION_MENTION).append(INSTAGRAM_CHANNEL);
+        } else {
+            pageQueue = config.getProperty("falcon.fb.disruption");
+            messageBuilder.append(DISRUPTION_MENTION).append(FACEBOOK_CHANNEL);
+        }
+        return returnResult(event, messageBuilder, pageQueue);
+    }
+
+    private QueueInfo routeToCyprusPage(BotEvent event, RoutingContext context, StringBuilder messageBuilder) {
+        String pageQueue = config.getProperty("cy.facebook");
+        String cyprusMsg = context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand()) ?
+            NO_CUSTOMER_BRAND_CY_FB : FALCONAIR_CUSTOMER_CY_FB;
+        messageBuilder.append(cyprusMsg);
+        return returnResult(event, messageBuilder, pageQueue);
+    }
+
+    private QueueInfo routeToGreeceQueue(BotEvent event, RoutingContext context, StringBuilder messageBuilder) {
+        if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+            String pageQueue = config.getProperty("gr.instagram");
+            messageBuilder.append(getGreeceInstagramMsg(context));
+            return returnResult(event, messageBuilder, pageQueue);
+        } else {
+            String pageQueue = config.getProperty("gr.facebook");
+            messageBuilder.append(getGreeceFbMsg(context));
+            return returnResult(event, messageBuilder, pageQueue);
+        }
+    }
+
+    private QueueInfo routeToFrenchQueue(BotEvent event, StringBuilder messageBuilder, RoutingContext context) {
+        String pageQueue = config.getProperty("falcon.french.care");
+        messageBuilder.append(getFrenchPageMessage(context));
+        return returnResult(event, messageBuilder, pageQueue);
     }
 
     private String getGreeceFbMsg(RoutingContext context) {
