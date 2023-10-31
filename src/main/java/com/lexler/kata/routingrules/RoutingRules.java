@@ -67,10 +67,8 @@ public class RoutingRules {
                         pageQueue = config.getProperty("gr.facebook");
                         messageBuilder.append(NO_CUSTOMER_BRAND_GR_FB);
                     } else {
-                        if (FACEBOOK.equalsIgnoreCase(context.network())) {
-                            pageQueue = config.getProperty("gr.facebook");
-                            messageBuilder.append(FALCONAIR_CUSTOMER_GR_FB);
-                        }
+                        pageQueue = config.getProperty("gr.facebook");
+                        messageBuilder.append(FALCONAIR_CUSTOMER_GR_FB);
                     }
                     return returnResult(event, messageBuilder, pageQueue);
                 }
