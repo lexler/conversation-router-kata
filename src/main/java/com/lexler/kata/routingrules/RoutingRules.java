@@ -53,9 +53,7 @@ public class RoutingRules {
             String pageQueue = "";
 
             if (context.greece()) {
-                //if no exec tags are present in conversation& author, assign based on customerType and pageId
                 if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
-                    //this indicated either a failure in LoyaltyHub api call, customer was not found, or we have not reAuthed person yet and no DB info was found
                     if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                         pageQueue = config.getProperty("gr.instagram");
                         messageBuilder.append(NO_CUSTOMER_BRAND_GR_INSTAGRAM);
