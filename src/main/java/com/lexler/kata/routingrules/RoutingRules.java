@@ -76,14 +76,6 @@ public class RoutingRules {
                 if (context.cyprus()) {
                     pageQueue = config.getProperty("cy.facebook");
                     messageBuilder.append(NO_CUSTOMER_BRAND_CY_FB);
-                } else if (context.biz()) {
-                    if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                        pageQueue = config.getProperty("biz.instagram");
-                        messageBuilder.append(NO_CUSTOMER_BRAND_BIZ_INSTAGRAM);
-                    } else {
-                        pageQueue = config.getProperty("biz.facebook");
-                        messageBuilder.append(NO_CUSTOMER_BRAND_BIZ_FB);
-                    }
                 } else if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                     if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
                         pageQueue = config.getProperty("falcon.instagram.disruption");
@@ -117,12 +109,6 @@ public class RoutingRules {
                 if (context.cyprus() && FACEBOOK.equalsIgnoreCase(context.network())) {
                     pageQueue = config.getProperty("cy.facebook");
                     messageBuilder.append(FALCONAIR_CUSTOMER_CY_FB);
-                } else if (context.biz() && FACEBOOK.equalsIgnoreCase(context.network())) {
-                    pageQueue = config.getProperty("biz.facebook");
-                    messageBuilder.append(FALCONAIR_CUSTOMER_BIZ_FB);
-                } else if (context.biz() && INSTAGRAM.equalsIgnoreCase(context.network())) {
-                    pageQueue = config.getProperty("biz.instagram");
-                    messageBuilder.append(FALCONAIR_CUSTOMER_BIZ_INSTAGRAM);
                 } else if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                     if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
                         pageQueue = config.getProperty("falcon.instagram.disruption");
