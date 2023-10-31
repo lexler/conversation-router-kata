@@ -111,9 +111,7 @@ public class RoutingRules {
                         messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
                     } else {//falcon and fb channel
                         if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-                            pageQueue = config.getProperty("falcon.fb.disruption");
-                            messageBuilder.append(DISRUPTION_MENTION);
-                            messageBuilder.append(FACEBOOK_CHANNEL);
+
                         } else {
                             pageQueue = config.getProperty("falcon.fb.care");
                             messageBuilder.append(NO_CUSTOMER_BRAND_FB);
@@ -123,9 +121,7 @@ public class RoutingRules {
                 } else {
                     if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                         if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-                            pageQueue = config.getProperty("falcon.instagram.disruption");
-                            messageBuilder.append(DISRUPTION_MENTION);
-                            messageBuilder.append(INSTAGRAM_CHANNEL);
+
                         } else {
                             pageQueue = config.getProperty("falcon.instagram.care");
                             messageBuilder.append(FALCONAIR_CUSTOMER_INSTAGRAM);
@@ -133,9 +129,6 @@ public class RoutingRules {
 
                     } else {//falcon and fb channel
                         if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-                            pageQueue = config.getProperty("falcon.fb.disruption");
-                            messageBuilder.append(DISRUPTION_MENTION);
-                            messageBuilder.append(FACEBOOK_CHANNEL);
                         } else {
                             pageQueue = config.getProperty("falcon.fb.care");
                             messageBuilder.append(FALCONAIR_CUSTOMER_FB);
