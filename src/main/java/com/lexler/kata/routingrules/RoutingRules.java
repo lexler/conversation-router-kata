@@ -29,93 +29,95 @@ public class RoutingRules {
         StringBuilder messageBuilder = new StringBuilder(130);
 
         try {
-            RoutingInfo result = routingInfo(event, conversationId, requestId, channelId);
+            RoutingContext context = routingInfo(event, conversationId, requestId, channelId);
 
             // route to bot queue if convo is not bound and needs to wait on timer function
-            if (!result.bound() && NO_STATUS.equalsIgnoreCase(result.status())) {
+            if (!context.bound() && NO_STATUS.equalsIgnoreCase(context.status())) {
                 log.info(message("Conversation is not bound, and status is empty or null. Assigning to the bot queue", "getAssignedWorkQueue")
                     .param(BIND_STATUS, false)
-                    .param(EVENT_STATUS, result.status())
+                    .param(EVENT_STATUS, context.status())
                     .add(event.toLogContext()));
-
                 return returnResult(event, new StringBuilder().append(NOT_BOUND_BOT_QUEUE), config.getProperty("bot.queue"));
             }
 
             //if convo is bound or is timer function event
             log.info(message("Conversation is either bound, bypassed or the timer expired. Assigning it to an agent workQueue.", "getAssignedWorkQueue")
-                .param(BIND_STATUS, result.bound())
-                .param(EVENT_STATUS, result.status())
+                .param(BIND_STATUS, context.bound())
+                .param(EVENT_STATUS, context.status())
                 .add(event.toLogContext()));
 
             //if already bound/or completed bind add verified message to output message
-            if (result.bound() || result.status().contains(SUBMITTED)) {
+            if (context.bound() || context.status().contains(SUBMITTED)) {
                 messageBuilder.append(VERIFIED);
             }
 
             //check if author has exec tags, put into exec queue according to which author tag is added. customer type does not indicate queue in this case.
-            if (!(NO_AUTHOR_EXEC_TAG.equalsIgnoreCase(result.authorTag()))) {
+            if (!context.authorTag().equalsIgnoreCase(NO_AUTHOR_EXEC_TAG)) {
                 log.info(message("Conversation has Author Exec tags. Assigning to one of the exec queues", "getAssignedWorkQueue")
-                    .param(BIND_STATUS, result.bound())
-                    .param(EVENT_STATUS, result.status())
+                    .param(BIND_STATUS, context.bound())
+                    .param(EVENT_STATUS, context.status())
                     .add(event.toLogContext()));
 
-                if (FALCONAIR.equalsIgnoreCase(result.authorTag())) {
+                if (FALCONAIR.equalsIgnoreCase(context.authorTag())) {
                     pageQueue = config.getProperty("falcon.exec.queue");
                     messageBuilder.append(AUTHOR_EXEC_FALCONAIR);
-                } else if (DUCKWINGS.equalsIgnoreCase(result.authorTag())) {
+                } else if (DUCKWINGS.equalsIgnoreCase(context.authorTag())) {
                     pageQueue = config.getProperty("duckwings.exec.queue");
                     messageBuilder.append(AUTHOR_EXEC_DUCKWINGS);
-                } else if (GR.equalsIgnoreCase(result.authorTag())) {
+                } else if (GR.equalsIgnoreCase(context.authorTag())) {
                     pageQueue = config.getProperty("gr.exec.queue");
                     messageBuilder.append(AUTHOR_EXEC_GR);
                 }
-                //check if convo has exec tags put into exec queue according to which exec is mentioned. customer type does not indicate queue in this case.
-            } else if (!NO_EXEC_MENTION_TAG.equalsIgnoreCase(result.execMention())) {
+                return returnResult(event, messageBuilder, pageQueue);
+            }
+
+            //check if convo has exec tags put into exec queue according to which exec is mentioned. customer type does not indicate queue in this case.
+            if (!NO_EXEC_MENTION_TAG.equalsIgnoreCase(context.execMention())) {
                 log.info(message("Conversation has Exec mention tags.", "getAssignedWorkQueue")
-                    .param(EXEC_MENTION, result.execMention())
+                    .param(EXEC_MENTION, context.execMention())
                     .add(event.toLogContext()));
 
-                if (FALCONAIR.equalsIgnoreCase(result.execMention())) {
+                if (FALCONAIR.equalsIgnoreCase(context.execMention())) {
                     pageQueue = config.getProperty("falcon.exec.queue");
                     messageBuilder.append(EXEC_MENTION_FALCONAIR);
-                } else if (DUCKWINGS.equalsIgnoreCase(result.execMention())) {
+                } else if (DUCKWINGS.equalsIgnoreCase(context.execMention())) {
                     pageQueue = config.getProperty("duckwings.exec.queue");
                     messageBuilder.append(EXEC_MENTION_DUCKWINGS);
-                } else if (GR.equalsIgnoreCase(result.execMention())) {
+                } else if (GR.equalsIgnoreCase(context.execMention())) {
                     pageQueue = config.getProperty("gr.exec.queue");
                     messageBuilder.append(EXEC_MENTION_GR);
                 }
 
                 //if no exec tags are present in conversation& author, assign based on customerType and pageId
-            } else if (result.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(result.customerBrand())) {
+            } else if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
                 log.info(message("Conversation has no customer brand. Assigning default falconair queue based on network type and pageid.", "getAssignedWorkQueue")
-                    .param(CUSTOMER_BRAND, result.customerBrand())
+                    .param(CUSTOMER_BRAND, context.customerBrand())
                     .add(event.toLogContext()));
                 //this indicated either a failure in LoyaltyHub api call, customer was not found, or we have not reAuthed person yet and no DB info was found
-                if (result.french()) {
+                if (context.french()) {
                     pageQueue = config.getProperty("falcon.french.care");
                     messageBuilder.append(NO_CUSTOMER_BRAND_FRENCH_PAGE);
-                } else if (result.greece()) {
-                    if (INSTAGRAM.equalsIgnoreCase(result.network())) {
+                } else if (context.greece()) {
+                    if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                         pageQueue = config.getProperty("gr.instagram");
                         messageBuilder.append(NO_CUSTOMER_BRAND_GR_INSTAGRAM);
                     } else {
                         pageQueue = config.getProperty("gr.facebook");
                         messageBuilder.append(NO_CUSTOMER_BRAND_GR_FB);
                     }
-                } else if (result.cyprus()) {
+                } else if (context.cyprus()) {
                     pageQueue = config.getProperty("cy.facebook");
                     messageBuilder.append(NO_CUSTOMER_BRAND_CY_FB);
-                } else if (result.biz()) {
-                    if (INSTAGRAM.equalsIgnoreCase(result.network())) {
+                } else if (context.biz()) {
+                    if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                         pageQueue = config.getProperty("biz.instagram");
                         messageBuilder.append(NO_CUSTOMER_BRAND_BIZ_INSTAGRAM);
                     } else {
                         pageQueue = config.getProperty("biz.facebook");
                         messageBuilder.append(NO_CUSTOMER_BRAND_BIZ_FB);
                     }
-                } else if (INSTAGRAM.equalsIgnoreCase(result.network())) {
-                    if (DISRUPTION.equalsIgnoreCase(result.disruptionTag())) {
+                } else if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                    if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
                         pageQueue = config.getProperty("falcon.instagram.disruption");
                         messageBuilder.append(DISRUPTION_MENTION);
                         messageBuilder.append(INSTAGRAM_CHANNEL);
@@ -124,7 +126,7 @@ public class RoutingRules {
                         messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
                     }
                 } else {//falcon and fb channel
-                    if (DISRUPTION.equalsIgnoreCase(result.disruptionTag())) {
+                    if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
                         pageQueue = config.getProperty("falcon.fb.disruption");
                         messageBuilder.append(DISRUPTION_MENTION);
                         messageBuilder.append(FACEBOOK_CHANNEL);
@@ -137,24 +139,24 @@ public class RoutingRules {
                 log.info(message("Checking customer brand.", "getAssignedWorkQueue")
                     .add(event.toLogContext()));
 
-                if (DUCKWINGS.equalsIgnoreCase(result.customerBrand())) {
+                if (DUCKWINGS.equalsIgnoreCase(context.customerBrand())) {
                     log.info(message("Customer identified as DuckWings customer", "getAssignedWorkQueue").add(event.toLogContext()));
-                    if (result.french() && INSTAGRAM.equalsIgnoreCase(result.network())) {
+                    if (context.french() && INSTAGRAM.equalsIgnoreCase(context.network())) {
                         pageQueue = config.getProperty("duck.french.instagram");
                         messageBuilder.append(DUCKWINGS_CUSTOMER_FRENCH_INSTAGRAM);
-                    } else if (result.french() && FACEBOOK.equalsIgnoreCase(result.network())) {
+                    } else if (context.french() && FACEBOOK.equalsIgnoreCase(context.network())) {
                         pageQueue = config.getProperty("duck.french.fb");
                         messageBuilder.append(DUCKWINGS_CUSTOMER_FRENCH_FB);
-                    } else if (result.greece() && INSTAGRAM.equalsIgnoreCase(result.network())) {
+                    } else if (context.greece() && INSTAGRAM.equalsIgnoreCase(context.network())) {
                         pageQueue = config.getProperty("duck.gr.instagram");
                         messageBuilder.append(DUCKWINGS_CUSTOMER_GR_INSTAGRAM);
-                    } else if (result.greece() && FACEBOOK.equalsIgnoreCase(result.network())) {
+                    } else if (context.greece() && FACEBOOK.equalsIgnoreCase(context.network())) {
                         pageQueue = config.getProperty("duck.gr.fb");
                         messageBuilder.append(DUCKWINGS_CUSTOMER_GR_FB);
-                    } else if (result.cyprus() && FACEBOOK.equalsIgnoreCase(result.network())) {
+                    } else if (context.cyprus() && FACEBOOK.equalsIgnoreCase(context.network())) {
                         pageQueue = config.getProperty("duck.cy.facebook");
                         messageBuilder.append(DUCKWINGS_CUSTOMER_CY_FB);
-                    } else if (INSTAGRAM.equalsIgnoreCase(result.network())) {
+                    } else if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                         pageQueue = config.getProperty("duck.care.instagram");
                         messageBuilder.append(DUCKWINGS_CUSTOMER_INSTAGRAM);
                     } else {
@@ -163,29 +165,29 @@ public class RoutingRules {
                     }
                 } else {//customer is falconair or prospect (or not in merged loyalty DB yet)
                     log.info(message("Customer identified as non DuckWings customer", "getAssignedWorkQueue")
-                        .param(EVENT_STATUS, result.status())
-                        .param(CUSTOMER_BRAND, result.customerBrand())
+                        .param(EVENT_STATUS, context.status())
+                        .param(CUSTOMER_BRAND, context.customerBrand())
                         .add(event.toLogContext()));
-                    if (result.french()) {
+                    if (context.french()) {
                         pageQueue = config.getProperty("falcon.french.care");
                         messageBuilder.append(FALCONAIR_CUSTOMER_FRENCH);
-                    } else if (result.greece() && INSTAGRAM.equalsIgnoreCase(result.network())) {
+                    } else if (context.greece() && INSTAGRAM.equalsIgnoreCase(context.network())) {
                         pageQueue = config.getProperty("gr.instagram");
                         messageBuilder.append(FALCONAIR_CUSTOMER_GR_INSTAGRAM);
-                    } else if (result.greece() && FACEBOOK.equalsIgnoreCase(result.network())) {
+                    } else if (context.greece() && FACEBOOK.equalsIgnoreCase(context.network())) {
                         pageQueue = config.getProperty("gr.facebook");
                         messageBuilder.append(FALCONAIR_CUSTOMER_GR_FB);
-                    } else if (result.cyprus() && FACEBOOK.equalsIgnoreCase(result.network())) {
+                    } else if (context.cyprus() && FACEBOOK.equalsIgnoreCase(context.network())) {
                         pageQueue = config.getProperty("cy.facebook");
                         messageBuilder.append(FALCONAIR_CUSTOMER_CY_FB);
-                    } else if (result.biz() && FACEBOOK.equalsIgnoreCase(result.network())) {
+                    } else if (context.biz() && FACEBOOK.equalsIgnoreCase(context.network())) {
                         pageQueue = config.getProperty("biz.facebook");
                         messageBuilder.append(FALCONAIR_CUSTOMER_BIZ_FB);
-                    } else if (result.biz() && INSTAGRAM.equalsIgnoreCase(result.network())) {
+                    } else if (context.biz() && INSTAGRAM.equalsIgnoreCase(context.network())) {
                         pageQueue = config.getProperty("biz.instagram");
                         messageBuilder.append(FALCONAIR_CUSTOMER_BIZ_INSTAGRAM);
-                    } else if (INSTAGRAM.equalsIgnoreCase(result.network())) {
-                        if (DISRUPTION.equalsIgnoreCase(result.disruptionTag())) {
+                    } else if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
                             pageQueue = config.getProperty("falcon.instagram.disruption");
                             messageBuilder.append(DISRUPTION_MENTION);
                             messageBuilder.append(INSTAGRAM_CHANNEL);
@@ -195,7 +197,7 @@ public class RoutingRules {
                         }
 
                     } else {//falcon and fb channel
-                        if (DISRUPTION.equalsIgnoreCase(result.disruptionTag())) {
+                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
                             pageQueue = config.getProperty("falcon.fb.disruption");
                             messageBuilder.append(DISRUPTION_MENTION);
                             messageBuilder.append(FACEBOOK_CHANNEL);
@@ -229,7 +231,7 @@ public class RoutingRules {
         return assignedQueueInfo;
     }
 
-    private record RoutingInfo(
+    private record RoutingContext(
         boolean bound, String status, String network, String authorTag, boolean french,
         String execMention, String disruptionTag, String customerBrand, boolean greece,
         boolean cyprus,
@@ -237,7 +239,7 @@ public class RoutingRules {
     ) {
     }
 
-    private RoutingInfo routingInfo(BotEvent event, String conversationId, String requestId, String channelId) {
+    private RoutingContext routingInfo(BotEvent event, String conversationId, String requestId, String channelId) {
         String externalId = event.coordinate().externalId();
         boolean french = isFrenchPage(externalId, requestId, conversationId, channelId);
         log.debug(message("French: " + french, "getAssignedWorkQueue")
@@ -267,7 +269,7 @@ public class RoutingRules {
         String disruptionTag = StringUtils.isEmpty(customerInfo.disruptionMentionTag()) ? NO_DISRUPTION_TAG : customerInfo.disruptionMentionTag();
         String customerBrand = StringUtils.isEmpty(customerInfo.customerBrand()) ? NO_CUSTOMER_BRAND : customerInfo.customerBrand();
         String network = event.coordinate().networkKey();
-        return new RoutingInfo(bound, status, network, authorTag, french, execMention, disruptionTag, customerBrand, greece, cyprus, biz);
+        return new RoutingContext(bound, status, network, authorTag, french, execMention, disruptionTag, customerBrand, greece, cyprus, biz);
     }
 
     public boolean isFrenchPage(String pageId, String requestId, String conversationId, String channelId) {
