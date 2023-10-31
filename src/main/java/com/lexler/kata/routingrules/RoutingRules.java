@@ -72,37 +72,20 @@ public class RoutingRules {
 
             if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
                 String pageQueue = "";
-                if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
-                    if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-                            pageQueue = config.getProperty("falcon.instagram.disruption");
-                            messageBuilder.append(DISRUPTION_MENTION);
-                            messageBuilder.append(INSTAGRAM_CHANNEL);
-                        }
-                    } else {//falcon and fb channel
-                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-                            pageQueue = config.getProperty("falcon.fb.disruption");
-                            messageBuilder.append(DISRUPTION_MENTION);
-                            messageBuilder.append(FACEBOOK_CHANNEL);
-                        }
+                if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                    if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
+                        pageQueue = config.getProperty("falcon.instagram.disruption");
+                        messageBuilder.append(DISRUPTION_MENTION);
+                        messageBuilder.append(INSTAGRAM_CHANNEL);
                     }
-                    return returnResult(event, messageBuilder, pageQueue);
-                } else {
-                    if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-                            pageQueue = config.getProperty("falcon.instagram.disruption");
-                            messageBuilder.append(DISRUPTION_MENTION);
-                            messageBuilder.append(INSTAGRAM_CHANNEL);
-                        }
-                    } else {//falcon and fb channel
-                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-                            pageQueue = config.getProperty("falcon.fb.disruption");
-                            messageBuilder.append(DISRUPTION_MENTION);
-                            messageBuilder.append(FACEBOOK_CHANNEL);
-                        }
+                } else {//falcon and fb channel
+                    if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
+                        pageQueue = config.getProperty("falcon.fb.disruption");
+                        messageBuilder.append(DISRUPTION_MENTION);
+                        messageBuilder.append(FACEBOOK_CHANNEL);
                     }
-                    return returnResult(event, messageBuilder, pageQueue);
                 }
+                return returnResult(event, messageBuilder, pageQueue);
             }
 
             String pageQueue = "";
