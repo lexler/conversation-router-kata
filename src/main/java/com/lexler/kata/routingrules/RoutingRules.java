@@ -28,17 +28,11 @@ public class RoutingRules {
             RoutingContext context = routingInfo(event, conversationId, requestId, channelId);
 
             if (isUnauthedNewConveration(context)) {
-                log.info(message("Conversation is not bound, and status is empty or null. Assigning to the bot queue", "getAssignedWorkQueue")
-                    .param(BIND_STATUS, false)
-                    .param(EVENT_STATUS, context.status())
-                    .add(event.toLogContext()));
-                return returnResult(event, new StringBuilder().append(NOT_BOUND_BOT_QUEUE), config.getProperty("bot.queue"));
+                return routeToBot(event, context);
             }
 
             log.info(message("Conversation is either bound, bypassed or the timer expired. Assigning it to an agent workQueue.", "getAssignedWorkQueue")
-                .param(BIND_STATUS, context.bound())
-                .param(EVENT_STATUS, context.status())
-                .add(event.toLogContext()));
+                .param(BIND_STATUS, context.bound()).param(EVENT_STATUS, context.status()).add(event.toLogContext()));
 
             if (authorHasExecTag(context)) {
                 return sendToVipQueue(event, context);
@@ -200,6 +194,14 @@ public class RoutingRules {
             String defaultQueueId = config.getProperty("falcon.fb.care");
             return new QueueInfo(ERROR_MESSAGE + defaultQueueId, defaultQueueId);
         }
+    }
+
+    private QueueInfo routeToBot(BotEvent event, RoutingContext context) {
+        log.info(message("Conversation is not bound, and status is empty or null. Assigning to the bot queue", "getAssignedWorkQueue")
+            .param(BIND_STATUS, false)
+            .param(EVENT_STATUS, context.status())
+            .add(event.toLogContext()));
+        return returnResult(event, new StringBuilder().append(NOT_BOUND_BOT_QUEUE), config.getProperty("bot.queue"));
     }
 
     private boolean isUnauthedNewConveration(RoutingContext context) {
