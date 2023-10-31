@@ -55,21 +55,23 @@ public class RoutingRules {
             if (context.greece()) {
                 if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                     pageQueue = config.getProperty("gr.instagram");
+                    String msg;
                     if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
-                        String msg = NO_CUSTOMER_BRAND_GR_INSTAGRAM;
+                        msg = NO_CUSTOMER_BRAND_GR_INSTAGRAM;
                         messageBuilder.append(msg);
                     } else {
-                        String msg = FALCONAIR_CUSTOMER_GR_INSTAGRAM;
+                        msg = FALCONAIR_CUSTOMER_GR_INSTAGRAM;
                         messageBuilder.append(msg);
                     }
                     return returnResult(event, messageBuilder, pageQueue);
                 } else {
                     pageQueue = config.getProperty("gr.facebook");
+                    String msg;
                     if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
-                        String msg = NO_CUSTOMER_BRAND_GR_FB;
+                        msg = NO_CUSTOMER_BRAND_GR_FB;
                         messageBuilder.append(msg);
                     } else {
-                        String msg = FALCONAIR_CUSTOMER_GR_FB;
+                        msg = FALCONAIR_CUSTOMER_GR_FB;
                         messageBuilder.append(msg);
                     }
                     return returnResult(event, messageBuilder, pageQueue);
