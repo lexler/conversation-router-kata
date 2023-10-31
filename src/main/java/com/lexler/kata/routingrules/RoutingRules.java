@@ -42,15 +42,16 @@ public class RoutingRules {
                 .param(EVENT_STATUS, context.status())
                 .add(event.toLogContext()));
 
-            StringBuilder messageBuilder = new StringBuilder(130);
-            //if already bound/or completed bind add verified message to output message
-            if (context.bound() || context.status().contains(SUBMITTED)) {
-                messageBuilder.append(VERIFIED);
-            }
 
             //check if author has exec tags, put into exec queue according to which author tag is added. customer type does not indicate queue in this case.
             if (authorHasExecTag(context)) {
                 return sendToVipQueue(event, context);
+            }
+
+            StringBuilder messageBuilder = new StringBuilder(130);
+            //if already bound/or completed bind add verified message to output message
+            if (context.bound() || context.status().contains(SUBMITTED)) {
+                messageBuilder.append(VERIFIED);
             }
 
             String pageQueue = "";
