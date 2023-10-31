@@ -65,13 +65,11 @@ public class RoutingRules {
             String pageQueue = "";
             if (context.cyprus()) {
                 if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
-                    if (context.cyprus()) {
-                        pageQueue = config.getProperty("cy.facebook");
-                        messageBuilder.append(NO_CUSTOMER_BRAND_CY_FB);
-                    }
+                    pageQueue = config.getProperty("cy.facebook");
+                    messageBuilder.append(NO_CUSTOMER_BRAND_CY_FB);
                     return returnResult(event, messageBuilder, pageQueue);
                 } else {
-                    if (context.cyprus() && FACEBOOK.equalsIgnoreCase(context.network())) {
+                    if (FACEBOOK.equalsIgnoreCase(context.network())) {
                         pageQueue = config.getProperty("cy.facebook");
                         messageBuilder.append(FALCONAIR_CUSTOMER_CY_FB);
                     } else {//falcon and fb channel
@@ -89,10 +87,7 @@ public class RoutingRules {
                 }
             } else {
                 if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
-                    if (context.cyprus()) {
-                        pageQueue = config.getProperty("cy.facebook");
-                        messageBuilder.append(NO_CUSTOMER_BRAND_CY_FB);
-                    } else if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                    if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                         if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
                             pageQueue = config.getProperty("falcon.instagram.disruption");
                             messageBuilder.append(DISRUPTION_MENTION);
@@ -113,10 +108,7 @@ public class RoutingRules {
                     }
                     return returnResult(event, messageBuilder, pageQueue);
                 } else {
-                    if (context.cyprus() && FACEBOOK.equalsIgnoreCase(context.network())) {
-                        pageQueue = config.getProperty("cy.facebook");
-                        messageBuilder.append(FALCONAIR_CUSTOMER_CY_FB);
-                    } else if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                    if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                         if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
                             pageQueue = config.getProperty("falcon.instagram.disruption");
                             messageBuilder.append(DISRUPTION_MENTION);
