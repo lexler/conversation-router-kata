@@ -62,21 +62,20 @@ public class RoutingRules {
                 }
             }
 
-            String pageQueue = "";
             if (context.cyprus()) {
+                String pageQueue = config.getProperty("cy.facebook");
                 if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
-                    pageQueue = config.getProperty("cy.facebook");
                     messageBuilder.append(NO_CUSTOMER_BRAND_CY_FB);
                     return returnResult(event, messageBuilder, pageQueue);
                 } else {
                     if (FACEBOOK.equalsIgnoreCase(context.network())) {
-                        pageQueue = config.getProperty("cy.facebook");
                         messageBuilder.append(FALCONAIR_CUSTOMER_CY_FB);
                     }
                     return returnResult(event, messageBuilder, pageQueue);
                 }
             }
 
+            String pageQueue = "";
             if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
                 if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                     if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
