@@ -66,10 +66,8 @@ public class RoutingRules {
                         .param(EVENT_STATUS, context.status())
                         .param(CUSTOMER_BRAND, context.customerBrand())
                         .add(event.toLogContext()));
-                    if (context.french()) {
-                        pageQueue = config.getProperty("falcon.french.care");
-                        messageBuilder.append(FALCONAIR_CUSTOMER_FRENCH);
-                    }
+                    pageQueue = config.getProperty("falcon.french.care");
+                    messageBuilder.append(FALCONAIR_CUSTOMER_FRENCH);
                     return returnResult(event, messageBuilder, pageQueue);
                 }
             } else {
