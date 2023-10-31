@@ -47,13 +47,7 @@ public class RoutingRules {
 
             if (context.french()) {
                 pageQueue = config.getProperty("falcon.french.care");
-                String msg = "";
-                if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
-                    msg = NO_CUSTOMER_BRAND_FRENCH_PAGE;
-                } else {
-                    msg = FALCONAIR_CUSTOMER_FRENCH;
-                }
-                messageBuilder.append(msg);
+                messageBuilder.append(getFrenchPageMessage(context));
                 return returnResult(event, messageBuilder, pageQueue);
             } else {
                 //if no exec tags are present in conversation& author, assign based on customerType and pageId
@@ -162,6 +156,12 @@ public class RoutingRules {
             String defaultQueueId = config.getProperty("falcon.fb.care");
             return new QueueInfo(ERROR_MESSAGE + defaultQueueId, defaultQueueId);
         }
+    }
+
+    private String getFrenchPageMessage(RoutingContext context) {
+        return context.customerBrand().isEmpty() ||
+            NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand()) ?
+            NO_CUSTOMER_BRAND_FRENCH_PAGE : FALCONAIR_CUSTOMER_FRENCH;
     }
 
     private QueueInfo routeToBot(BotEvent event, RoutingContext context) {
