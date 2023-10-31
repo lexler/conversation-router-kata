@@ -53,10 +53,8 @@ public class RoutingRules {
                         .add(event.toLogContext()));
 
                     //this indicated either a failure in LoyaltyHub api call, customer was not found, or we have not reAuthed person yet and no DB info was found
-                    if (context.french()) {
-                        pageQueue = config.getProperty("falcon.french.care");
-                        messageBuilder.append(NO_CUSTOMER_BRAND_FRENCH_PAGE);
-                    }
+                    pageQueue = config.getProperty("falcon.french.care");
+                    messageBuilder.append(NO_CUSTOMER_BRAND_FRENCH_PAGE);
                     return returnResult(event, messageBuilder, pageQueue);
                 } else {
                     //at this point expecting customer brand and/or bind/status details to be present without exect tags
