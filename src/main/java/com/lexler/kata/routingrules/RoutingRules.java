@@ -42,7 +42,7 @@ public class RoutingRules {
             }
 
             //if convo is bound or is timer function event
-            log.info(message("Conversation is either bound, bypassed or the timer expired. Assigning it to a new workQueue.", "getAssignedWorkQueue")
+            log.info(message("Conversation is either bound, bypassed or the timer expired. Assigning it to an agent workQueue.", "getAssignedWorkQueue")
                 .param(BIND_STATUS, result.bound())
                 .param(EVENT_STATUS, result.status())
                 .add(event.toLogContext()));
