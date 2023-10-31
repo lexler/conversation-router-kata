@@ -69,35 +69,6 @@ public class RoutingRules {
                             pageQueue = config.getProperty("gr.facebook");
                             messageBuilder.append(NO_CUSTOMER_BRAND_GR_FB);
                         }
-                    } else if (context.cyprus()) {
-                        pageQueue = config.getProperty("cy.facebook");
-                        messageBuilder.append(NO_CUSTOMER_BRAND_CY_FB);
-                    } else if (context.biz()) {
-                        if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                            pageQueue = config.getProperty("biz.instagram");
-                            messageBuilder.append(NO_CUSTOMER_BRAND_BIZ_INSTAGRAM);
-                        } else {
-                            pageQueue = config.getProperty("biz.facebook");
-                            messageBuilder.append(NO_CUSTOMER_BRAND_BIZ_FB);
-                        }
-                    } else if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-                            pageQueue = config.getProperty("falcon.instagram.disruption");
-                            messageBuilder.append(DISRUPTION_MENTION);
-                            messageBuilder.append(INSTAGRAM_CHANNEL);
-                        } else {
-                            pageQueue = config.getProperty("falcon.instagram.care");
-                            messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
-                        }
-                    } else {//falcon and fb channel
-                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-                            pageQueue = config.getProperty("falcon.fb.disruption");
-                            messageBuilder.append(DISRUPTION_MENTION);
-                            messageBuilder.append(FACEBOOK_CHANNEL);
-                        } else {
-                            pageQueue = config.getProperty("falcon.fb.care");
-                            messageBuilder.append(NO_CUSTOMER_BRAND_FB);
-                        }
                     }
                     return returnResult(event, messageBuilder, pageQueue);
                 } else {
@@ -116,35 +87,6 @@ public class RoutingRules {
                     } else if (context.greece() && FACEBOOK.equalsIgnoreCase(context.network())) {
                         pageQueue = config.getProperty("gr.facebook");
                         messageBuilder.append(FALCONAIR_CUSTOMER_GR_FB);
-                    } else if (context.cyprus() && FACEBOOK.equalsIgnoreCase(context.network())) {
-                        pageQueue = config.getProperty("cy.facebook");
-                        messageBuilder.append(FALCONAIR_CUSTOMER_CY_FB);
-                    } else if (context.biz() && FACEBOOK.equalsIgnoreCase(context.network())) {
-                        pageQueue = config.getProperty("biz.facebook");
-                        messageBuilder.append(FALCONAIR_CUSTOMER_BIZ_FB);
-                    } else if (context.biz() && INSTAGRAM.equalsIgnoreCase(context.network())) {
-                        pageQueue = config.getProperty("biz.instagram");
-                        messageBuilder.append(FALCONAIR_CUSTOMER_BIZ_INSTAGRAM);
-                    } else if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-                            pageQueue = config.getProperty("falcon.instagram.disruption");
-                            messageBuilder.append(DISRUPTION_MENTION);
-                            messageBuilder.append(INSTAGRAM_CHANNEL);
-                        } else {
-                            pageQueue = config.getProperty("falcon.instagram.care");
-                            messageBuilder.append(FALCONAIR_CUSTOMER_INSTAGRAM);
-                        }
-
-                    } else {//falcon and fb channel
-                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-                            pageQueue = config.getProperty("falcon.fb.disruption");
-                            messageBuilder.append(DISRUPTION_MENTION);
-                            messageBuilder.append(FACEBOOK_CHANNEL);
-                        } else {
-                            pageQueue = config.getProperty("falcon.fb.care");
-                            messageBuilder.append(FALCONAIR_CUSTOMER_FB);
-                        }
-
                     }
                     return returnResult(event, messageBuilder, pageQueue);
                 }
@@ -157,15 +99,7 @@ public class RoutingRules {
                         .add(event.toLogContext()));
 
                     //this indicated either a failure in LoyaltyHub api call, customer was not found, or we have not reAuthed person yet and no DB info was found
-                    if (context.greece()) {
-                        if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                            pageQueue = config.getProperty("gr.instagram");
-                            messageBuilder.append(NO_CUSTOMER_BRAND_GR_INSTAGRAM);
-                        } else {
-                            pageQueue = config.getProperty("gr.facebook");
-                            messageBuilder.append(NO_CUSTOMER_BRAND_GR_FB);
-                        }
-                    } else if (context.cyprus()) {
+                    if (context.cyprus()) {
                         pageQueue = config.getProperty("cy.facebook");
                         messageBuilder.append(NO_CUSTOMER_BRAND_CY_FB);
                     } else if (context.biz()) {
