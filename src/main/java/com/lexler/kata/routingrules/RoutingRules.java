@@ -63,58 +63,112 @@ public class RoutingRules {
             }
 
             String pageQueue = "";
+            if (context.cyprus()) {
+                if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
+                    if (context.cyprus()) {
+                        pageQueue = config.getProperty("cy.facebook");
+                        messageBuilder.append(NO_CUSTOMER_BRAND_CY_FB);
+                    } else if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
+                            pageQueue = config.getProperty("falcon.instagram.disruption");
+                            messageBuilder.append(DISRUPTION_MENTION);
+                            messageBuilder.append(INSTAGRAM_CHANNEL);
+                        } else {
+                            pageQueue = config.getProperty("falcon.instagram.care");
+                            messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
+                        }
+                    } else {//falcon and fb channel
+                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
+                            pageQueue = config.getProperty("falcon.fb.disruption");
+                            messageBuilder.append(DISRUPTION_MENTION);
+                            messageBuilder.append(FACEBOOK_CHANNEL);
+                        } else {
+                            pageQueue = config.getProperty("falcon.fb.care");
+                            messageBuilder.append(NO_CUSTOMER_BRAND_FB);
+                        }
+                    }
+                    return returnResult(event, messageBuilder, pageQueue);
+                } else {
+                    if (context.cyprus() && FACEBOOK.equalsIgnoreCase(context.network())) {
+                        pageQueue = config.getProperty("cy.facebook");
+                        messageBuilder.append(FALCONAIR_CUSTOMER_CY_FB);
+                    } else if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
+                            pageQueue = config.getProperty("falcon.instagram.disruption");
+                            messageBuilder.append(DISRUPTION_MENTION);
+                            messageBuilder.append(INSTAGRAM_CHANNEL);
+                        } else {
+                            pageQueue = config.getProperty("falcon.instagram.care");
+                            messageBuilder.append(FALCONAIR_CUSTOMER_INSTAGRAM);
+                        }
 
-            if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
-                if (context.cyprus()) {
-                    pageQueue = config.getProperty("cy.facebook");
-                    messageBuilder.append(NO_CUSTOMER_BRAND_CY_FB);
-                } else if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                    if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-                        pageQueue = config.getProperty("falcon.instagram.disruption");
-                        messageBuilder.append(DISRUPTION_MENTION);
-                        messageBuilder.append(INSTAGRAM_CHANNEL);
-                    } else {
-                        pageQueue = config.getProperty("falcon.instagram.care");
-                        messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
+                    } else {//falcon and fb channel
+                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
+                            pageQueue = config.getProperty("falcon.fb.disruption");
+                            messageBuilder.append(DISRUPTION_MENTION);
+                            messageBuilder.append(FACEBOOK_CHANNEL);
+                        } else {
+                            pageQueue = config.getProperty("falcon.fb.care");
+                            messageBuilder.append(FALCONAIR_CUSTOMER_FB);
+                        }
+
                     }
-                } else {//falcon and fb channel
-                    if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-                        pageQueue = config.getProperty("falcon.fb.disruption");
-                        messageBuilder.append(DISRUPTION_MENTION);
-                        messageBuilder.append(FACEBOOK_CHANNEL);
-                    } else {
-                        pageQueue = config.getProperty("falcon.fb.care");
-                        messageBuilder.append(NO_CUSTOMER_BRAND_FB);
-                    }
+                    return returnResult(event, messageBuilder, pageQueue);
                 }
-                return returnResult(event, messageBuilder, pageQueue);
             } else {
-                if (context.cyprus() && FACEBOOK.equalsIgnoreCase(context.network())) {
-                    pageQueue = config.getProperty("cy.facebook");
-                    messageBuilder.append(FALCONAIR_CUSTOMER_CY_FB);
-                } else if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                    if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-                        pageQueue = config.getProperty("falcon.instagram.disruption");
-                        messageBuilder.append(DISRUPTION_MENTION);
-                        messageBuilder.append(INSTAGRAM_CHANNEL);
-                    } else {
-                        pageQueue = config.getProperty("falcon.instagram.care");
-                        messageBuilder.append(FALCONAIR_CUSTOMER_INSTAGRAM);
+                if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
+                    if (context.cyprus()) {
+                        pageQueue = config.getProperty("cy.facebook");
+                        messageBuilder.append(NO_CUSTOMER_BRAND_CY_FB);
+                    } else if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
+                            pageQueue = config.getProperty("falcon.instagram.disruption");
+                            messageBuilder.append(DISRUPTION_MENTION);
+                            messageBuilder.append(INSTAGRAM_CHANNEL);
+                        } else {
+                            pageQueue = config.getProperty("falcon.instagram.care");
+                            messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
+                        }
+                    } else {//falcon and fb channel
+                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
+                            pageQueue = config.getProperty("falcon.fb.disruption");
+                            messageBuilder.append(DISRUPTION_MENTION);
+                            messageBuilder.append(FACEBOOK_CHANNEL);
+                        } else {
+                            pageQueue = config.getProperty("falcon.fb.care");
+                            messageBuilder.append(NO_CUSTOMER_BRAND_FB);
+                        }
                     }
+                    return returnResult(event, messageBuilder, pageQueue);
+                } else {
+                    if (context.cyprus() && FACEBOOK.equalsIgnoreCase(context.network())) {
+                        pageQueue = config.getProperty("cy.facebook");
+                        messageBuilder.append(FALCONAIR_CUSTOMER_CY_FB);
+                    } else if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
+                            pageQueue = config.getProperty("falcon.instagram.disruption");
+                            messageBuilder.append(DISRUPTION_MENTION);
+                            messageBuilder.append(INSTAGRAM_CHANNEL);
+                        } else {
+                            pageQueue = config.getProperty("falcon.instagram.care");
+                            messageBuilder.append(FALCONAIR_CUSTOMER_INSTAGRAM);
+                        }
 
-                } else {//falcon and fb channel
-                    if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-                        pageQueue = config.getProperty("falcon.fb.disruption");
-                        messageBuilder.append(DISRUPTION_MENTION);
-                        messageBuilder.append(FACEBOOK_CHANNEL);
-                    } else {
-                        pageQueue = config.getProperty("falcon.fb.care");
-                        messageBuilder.append(FALCONAIR_CUSTOMER_FB);
+                    } else {//falcon and fb channel
+                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
+                            pageQueue = config.getProperty("falcon.fb.disruption");
+                            messageBuilder.append(DISRUPTION_MENTION);
+                            messageBuilder.append(FACEBOOK_CHANNEL);
+                        } else {
+                            pageQueue = config.getProperty("falcon.fb.care");
+                            messageBuilder.append(FALCONAIR_CUSTOMER_FB);
+                        }
+
                     }
-
+                    return returnResult(event, messageBuilder, pageQueue);
                 }
-                return returnResult(event, messageBuilder, pageQueue);
             }
+
 
         } catch (Exception e) {
             log.error(message("An error occurred when trying to assign work queue id. Assigning default values", "getAssignedWorkQueue")
