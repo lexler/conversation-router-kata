@@ -38,12 +38,11 @@ public class RoutingRules {
                     .param(EVENT_STATUS, result.status())
                     .add(event.toLogContext()));
 
-                pageQueue = config.getProperty("bot.queue");
-                messageBuilder.append(NOT_BOUND_BOT_QUEUE);
-                return returnResult(event, messageBuilder, pageQueue);
+                return returnResult(event, new StringBuilder().append(NOT_BOUND_BOT_QUEUE), config.getProperty("bot.queue"));
+            }
 
-                //if convo is bound or is timer function event
-            } else if ((result.bound() || result.status().contains(EXPIRED) || result.status().contains(SUBMITTED) || result.status().contains(BYPASS))) {
+            //if convo is bound or is timer function event
+            if ((result.bound() || result.status().contains(EXPIRED) || result.status().contains(SUBMITTED) || result.status().contains(BYPASS))) {
                 log.info(message("Conversation is either bound, bypassed or the timer expired. Assigning it to a new workQueue.", "getAssignedWorkQueue")
                     .param(BIND_STATUS, result.bound())
                     .param(EVENT_STATUS, result.status())
