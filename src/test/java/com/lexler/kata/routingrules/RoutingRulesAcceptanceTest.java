@@ -82,4 +82,41 @@ class RoutingRulesAcceptanceTest {
     private String formatQueueInfo(QueueInfo info) {
         return String.format("Routed to:\n  queue: %s\n  message: %s\n", info.queueId(), info.message());
     }
+
+    @Test
+    void pinOnlyQueueIds() {
+        String[] channelIds = new String[]{
+            "facebook_5001_200", "facebook_1001_200", "facebook_1002_200", "facebook_2001_200", "facebook_2002_200", "facebook_3001_200",
+            "facebook_4001_200",
+            "instagram_5001_200", "instagram_1003_200", "instagram_1004_200", "instagram_2003_200", "instagram_2004_200",
+            "instagram_4002_200"};
+
+        String[] brands = new String[]{"", "DuckWings", "FalconAir"};
+        Boolean[] bindStatuses = new Boolean[]{true, false};
+        String[] statuses = new String[]{"", "expired", "submitted", "bypass"};
+        String[] authorTags = new String[]{"", "NO_EXEC_MENTION_TAG", "NO_AUTHOR_EXEC_TAG", "FalconAir", "DuckWings", "GR"};
+        String[] execMentionTags = new String[]{"", "FalconAir", "DuckWings", "GR"};
+        String[] disruptionTags = new String[]{"NO_DISRUPTION_TAG", "Disruption"};
+        CombinationApprovals.verifyAllCombinations(this::callRoutingRules,
+            channelIds, brands, bindStatuses, statuses, authorTags, execMentionTags, disruptionTags);
+    }
+
+    private String callRoutingRules(String channelId,
+                                    String brand,
+                                    boolean isBind,
+                                    String status,
+                                    String authorTag,
+                                    String execMentionTag,
+                                    String disruptionTag) {
+        String channel = ChannelIdParser.getChannel(channelId);
+        String pageId = ChannelIdParser.getPageId(channelId);
+        BotEvent event = new BotEvent(
+            "request-id-0",
+            "500",
+            new Coordinate(channel, pageId),
+            "200",
+            new CustomerInfo(brand, isBind, status, channel + "_" + pageId + "_200", authorTag, execMentionTag, disruptionTag));
+        QueueInfo result = routingRules.getAssignedWorkQueue(event, event.conversationId(), event.requestId(), event.channelId());
+        return result.queueId();
+    }
 }
