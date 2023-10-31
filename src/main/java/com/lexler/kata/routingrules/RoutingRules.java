@@ -140,13 +140,7 @@ public class RoutingRules {
                         .param(EVENT_STATUS, context.status())
                         .param(CUSTOMER_BRAND, context.customerBrand())
                         .add(event.toLogContext()));
-                    if (context.greece() && INSTAGRAM.equalsIgnoreCase(context.network())) {
-                        pageQueue = config.getProperty("gr.instagram");
-                        messageBuilder.append(FALCONAIR_CUSTOMER_GR_INSTAGRAM);
-                    } else if (context.greece() && FACEBOOK.equalsIgnoreCase(context.network())) {
-                        pageQueue = config.getProperty("gr.facebook");
-                        messageBuilder.append(FALCONAIR_CUSTOMER_GR_FB);
-                    } else if (context.cyprus() && FACEBOOK.equalsIgnoreCase(context.network())) {
+                    if (context.cyprus() && FACEBOOK.equalsIgnoreCase(context.network())) {
                         pageQueue = config.getProperty("cy.facebook");
                         messageBuilder.append(FALCONAIR_CUSTOMER_CY_FB);
                     } else if (context.biz() && FACEBOOK.equalsIgnoreCase(context.network())) {
