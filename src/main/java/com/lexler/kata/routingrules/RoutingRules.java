@@ -51,22 +51,7 @@ public class RoutingRules {
             String pageQueue = "";
             //check if author has exec tags, put into exec queue according to which author tag is added. customer type does not indicate queue in this case.
             if (authorHasExecTag(context)) {
-                log.info(message("Conversation has Author Exec tags. Assigning to one of the exec queues", "getAssignedWorkQueue")
-                    .param(BIND_STATUS, context.bound())
-                    .param(EVENT_STATUS, context.status())
-                    .add(event.toLogContext()));
-
-                if (FALCONAIR.equalsIgnoreCase(context.authorTag())) {
-                    pageQueue = config.getProperty("falcon.exec.queue");
-                    messageBuilder.append(AUTHOR_EXEC_FALCONAIR);
-                } else if (DUCKWINGS.equalsIgnoreCase(context.authorTag())) {
-                    pageQueue = config.getProperty("duckwings.exec.queue");
-                    messageBuilder.append(AUTHOR_EXEC_DUCKWINGS);
-                } else if (GR.equalsIgnoreCase(context.authorTag())) {
-                    pageQueue = config.getProperty("gr.exec.queue");
-                    messageBuilder.append(AUTHOR_EXEC_GR);
-                }
-                return returnResult(event, messageBuilder, pageQueue);
+                return sendToVipQueue(event, context, pageQueue);
             }
 
             //check if convo has exec tags put into exec queue according to which exec is mentioned. customer type does not indicate queue in this case.
@@ -218,6 +203,31 @@ public class RoutingRules {
             String defaultQueueId = config.getProperty("falcon.fb.care");
             return new QueueInfo(ERROR_MESSAGE + defaultQueueId, defaultQueueId);
         }
+    }
+
+    private QueueInfo sendToVipQueue(BotEvent event, RoutingContext context, String pageQueue) {
+        StringBuilder notification = new StringBuilder(130);
+        //if already bound/or completed bind add verified message to output message
+        if (context.bound() || context.status().contains(SUBMITTED)) {
+            notification.append(VERIFIED);
+        }
+
+        log.info(message("Conversation has Author Exec tags. Assigning to one of the exec queues", "getAssignedWorkQueue")
+            .param(BIND_STATUS, context.bound())
+            .param(EVENT_STATUS, context.status())
+            .add(event.toLogContext()));
+
+        if (FALCONAIR.equalsIgnoreCase(context.authorTag())) {
+            pageQueue = config.getProperty("falcon.exec.queue");
+            notification.append(AUTHOR_EXEC_FALCONAIR);
+        } else if (DUCKWINGS.equalsIgnoreCase(context.authorTag())) {
+            pageQueue = config.getProperty("duckwings.exec.queue");
+            notification.append(AUTHOR_EXEC_DUCKWINGS);
+        } else if (GR.equalsIgnoreCase(context.authorTag())) {
+            pageQueue = config.getProperty("gr.exec.queue");
+            notification.append(AUTHOR_EXEC_GR);
+        }
+        return returnResult(event, notification, pageQueue);
     }
 
     private boolean authorHasExecTag(RoutingContext context) {
