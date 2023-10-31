@@ -91,7 +91,6 @@ public class RoutingRules {
                     pageQueue = config.getProperty("falcon.fb.care");
                     messageBuilder.append(NO_CUSTOMER_BRAND_FB);
                 }
-                return returnResult(event, messageBuilder, pageQueue);
             } else {
                 if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                     pageQueue = config.getProperty("falcon.instagram.care");
@@ -100,8 +99,8 @@ public class RoutingRules {
                     pageQueue = config.getProperty("falcon.fb.care");
                     messageBuilder.append(FALCONAIR_CUSTOMER_FB);
                 }
-                return returnResult(event, messageBuilder, pageQueue);
             }
+            return returnResult(event, messageBuilder, pageQueue);
 
 
         } catch (Exception e) {
