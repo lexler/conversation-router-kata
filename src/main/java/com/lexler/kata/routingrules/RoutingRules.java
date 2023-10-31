@@ -24,10 +24,6 @@ public class RoutingRules {
 
     public QueueInfo getAssignedWorkQueue(BotEvent event, String conversationId, String requestId, String channelId) {
         log.info(message("Determining workQueue the conversation belongs to", "getAssignedWorkQueue").add(event.toLogContext()));
-
-        String pageQueue = "";
-        StringBuilder messageBuilder = new StringBuilder(130);
-
         try {
             RoutingContext context = routingInfo(event, conversationId, requestId, channelId);
 
@@ -46,13 +42,15 @@ public class RoutingRules {
                 .param(EVENT_STATUS, context.status())
                 .add(event.toLogContext()));
 
+            StringBuilder messageBuilder = new StringBuilder(130);
             //if already bound/or completed bind add verified message to output message
             if (context.bound() || context.status().contains(SUBMITTED)) {
                 messageBuilder.append(VERIFIED);
             }
 
+            String pageQueue = "";
             //check if author has exec tags, put into exec queue according to which author tag is added. customer type does not indicate queue in this case.
-            if (!context.authorTag().equalsIgnoreCase(NO_AUTHOR_EXEC_TAG)) {
+            if (authorHasExecTag(context)) {
                 log.info(message("Conversation has Author Exec tags. Assigning to one of the exec queues", "getAssignedWorkQueue")
                     .param(BIND_STATUS, context.bound())
                     .param(EVENT_STATUS, context.status())
@@ -209,15 +207,21 @@ public class RoutingRules {
                     }
                 }
             }
+            return returnResult(event, messageBuilder, pageQueue);
+
         } catch (Exception e) {
             log.error(message("An error occurred when trying to assign work queue id. Assigning default values", "getAssignedWorkQueue")
                 .param(EVENT, event)
                 .param(EXCEPTION, e.getMessage()));
             //set default values if any errors assigning work queue above
-            pageQueue = config.getProperty("falcon.fb.care");
-            messageBuilder.append(ERROR_MESSAGE);
+
+            String defaultQueueId = config.getProperty("falcon.fb.care");
+            return new QueueInfo(ERROR_MESSAGE + defaultQueueId, defaultQueueId);
         }
-        return returnResult(event, messageBuilder, pageQueue);
+    }
+
+    private boolean authorHasExecTag(RoutingContext context) {
+        return !context.authorTag().equalsIgnoreCase(NO_AUTHOR_EXEC_TAG);
     }
 
     private QueueInfo returnResult(BotEvent event, StringBuilder messageBuilder, String queueId) {
