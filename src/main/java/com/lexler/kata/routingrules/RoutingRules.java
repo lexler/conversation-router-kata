@@ -70,57 +70,100 @@ public class RoutingRules {
                 return returnResult(event, messageBuilder, pageQueue);
             }
 
-            if (true) {
-
-            } else {
-
-            }
-
-            String pageQueue = "";
-            if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
-                if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                    if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-                        pageQueue = config.getProperty("falcon.instagram.disruption");
-                        messageBuilder.append(DISRUPTION_MENTION);
-                        messageBuilder.append(INSTAGRAM_CHANNEL);
-                    } else {
-                        pageQueue = config.getProperty("falcon.instagram.care");
-                        messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
+            if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
+                String pageQueue = "";
+                if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
+                    if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
+                            pageQueue = config.getProperty("falcon.instagram.disruption");
+                            messageBuilder.append(DISRUPTION_MENTION);
+                            messageBuilder.append(INSTAGRAM_CHANNEL);
+                        } else {
+                            pageQueue = config.getProperty("falcon.instagram.care");
+                            messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
+                        }
+                    } else {//falcon and fb channel
+                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
+                            pageQueue = config.getProperty("falcon.fb.disruption");
+                            messageBuilder.append(DISRUPTION_MENTION);
+                            messageBuilder.append(FACEBOOK_CHANNEL);
+                        } else {
+                            pageQueue = config.getProperty("falcon.fb.care");
+                            messageBuilder.append(NO_CUSTOMER_BRAND_FB);
+                        }
                     }
-                } else {//falcon and fb channel
-                    if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-                        pageQueue = config.getProperty("falcon.fb.disruption");
-                        messageBuilder.append(DISRUPTION_MENTION);
-                        messageBuilder.append(FACEBOOK_CHANNEL);
-                    } else {
-                        pageQueue = config.getProperty("falcon.fb.care");
-                        messageBuilder.append(NO_CUSTOMER_BRAND_FB);
+                    return returnResult(event, messageBuilder, pageQueue);
+                } else {
+                    if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
+                            pageQueue = config.getProperty("falcon.instagram.disruption");
+                            messageBuilder.append(DISRUPTION_MENTION);
+                            messageBuilder.append(INSTAGRAM_CHANNEL);
+                        } else {
+                            pageQueue = config.getProperty("falcon.instagram.care");
+                            messageBuilder.append(FALCONAIR_CUSTOMER_INSTAGRAM);
+                        }
+
+                    } else {//falcon and fb channel
+                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
+                            pageQueue = config.getProperty("falcon.fb.disruption");
+                            messageBuilder.append(DISRUPTION_MENTION);
+                            messageBuilder.append(FACEBOOK_CHANNEL);
+                        } else {
+                            pageQueue = config.getProperty("falcon.fb.care");
+                            messageBuilder.append(FALCONAIR_CUSTOMER_FB);
+                        }
+
                     }
+                    return returnResult(event, messageBuilder, pageQueue);
                 }
-                return returnResult(event, messageBuilder, pageQueue);
             } else {
-                if (INSTAGRAM.equalsIgnoreCase(context.network())) {
-                    if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-                        pageQueue = config.getProperty("falcon.instagram.disruption");
-                        messageBuilder.append(DISRUPTION_MENTION);
-                        messageBuilder.append(INSTAGRAM_CHANNEL);
-                    } else {
-                        pageQueue = config.getProperty("falcon.instagram.care");
-                        messageBuilder.append(FALCONAIR_CUSTOMER_INSTAGRAM);
+                String pageQueue = "";
+                if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
+                    if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
+                            pageQueue = config.getProperty("falcon.instagram.disruption");
+                            messageBuilder.append(DISRUPTION_MENTION);
+                            messageBuilder.append(INSTAGRAM_CHANNEL);
+                        } else {
+                            pageQueue = config.getProperty("falcon.instagram.care");
+                            messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
+                        }
+                    } else {//falcon and fb channel
+                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
+                            pageQueue = config.getProperty("falcon.fb.disruption");
+                            messageBuilder.append(DISRUPTION_MENTION);
+                            messageBuilder.append(FACEBOOK_CHANNEL);
+                        } else {
+                            pageQueue = config.getProperty("falcon.fb.care");
+                            messageBuilder.append(NO_CUSTOMER_BRAND_FB);
+                        }
                     }
+                    return returnResult(event, messageBuilder, pageQueue);
+                } else {
+                    if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
+                            pageQueue = config.getProperty("falcon.instagram.disruption");
+                            messageBuilder.append(DISRUPTION_MENTION);
+                            messageBuilder.append(INSTAGRAM_CHANNEL);
+                        } else {
+                            pageQueue = config.getProperty("falcon.instagram.care");
+                            messageBuilder.append(FALCONAIR_CUSTOMER_INSTAGRAM);
+                        }
 
-                } else {//falcon and fb channel
-                    if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
-                        pageQueue = config.getProperty("falcon.fb.disruption");
-                        messageBuilder.append(DISRUPTION_MENTION);
-                        messageBuilder.append(FACEBOOK_CHANNEL);
-                    } else {
-                        pageQueue = config.getProperty("falcon.fb.care");
-                        messageBuilder.append(FALCONAIR_CUSTOMER_FB);
+                    } else {//falcon and fb channel
+                        if (DISRUPTION.equalsIgnoreCase(context.disruptionTag())) {
+                            pageQueue = config.getProperty("falcon.fb.disruption");
+                            messageBuilder.append(DISRUPTION_MENTION);
+                            messageBuilder.append(FACEBOOK_CHANNEL);
+                        } else {
+                            pageQueue = config.getProperty("falcon.fb.care");
+                            messageBuilder.append(FALCONAIR_CUSTOMER_FB);
+                        }
+
                     }
-
+                    return returnResult(event, messageBuilder, pageQueue);
                 }
-                return returnResult(event, messageBuilder, pageQueue);
             }
 
 
