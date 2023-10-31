@@ -59,26 +59,24 @@ public class RoutingRules {
                             pageQueue = config.getProperty("gr.instagram");
                             messageBuilder.append(NO_CUSTOMER_BRAND_GR_INSTAGRAM);
                         }
-                        return returnResult(event, messageBuilder, pageQueue);
                     } else {
                         if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                             pageQueue = config.getProperty("gr.instagram");
                             messageBuilder.append(FALCONAIR_CUSTOMER_GR_INSTAGRAM);
                         }
-                        return returnResult(event, messageBuilder, pageQueue);
                     }
+                    return returnResult(event, messageBuilder, pageQueue);
                 } else {
                     if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
                         pageQueue = config.getProperty("gr.facebook");
                         messageBuilder.append(NO_CUSTOMER_BRAND_GR_FB);
-                        return returnResult(event, messageBuilder, pageQueue);
                     } else {
                         if (FACEBOOK.equalsIgnoreCase(context.network())) {
                             pageQueue = config.getProperty("gr.facebook");
                             messageBuilder.append(FALCONAIR_CUSTOMER_GR_FB);
                         }
-                        return returnResult(event, messageBuilder, pageQueue);
                     }
+                    return returnResult(event, messageBuilder, pageQueue);
                 }
 
             } else {
