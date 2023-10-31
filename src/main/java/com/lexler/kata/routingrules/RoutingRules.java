@@ -53,6 +53,12 @@ public class RoutingRules {
             String pageQueue = "";
 
             if (context.greece()) {
+                if (INSTAGRAM.equalsIgnoreCase(context.network())) {
+
+                } else {
+
+                }
+
                 if (context.customerBrand().isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(context.customerBrand())) {
                     if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                         pageQueue = config.getProperty("gr.instagram");
