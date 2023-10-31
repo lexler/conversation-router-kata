@@ -84,6 +84,7 @@ class RoutingRulesAcceptanceTest {
     }
 
     @Test
+    @Deprecated
     void pinOnlyQueueIds() {
         String[] channelIds = new String[]{
             "facebook_5001_200", "facebook_1001_200", "facebook_1002_200", "facebook_2001_200", "facebook_2002_200", "facebook_3001_200",

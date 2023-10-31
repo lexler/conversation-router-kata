@@ -217,11 +217,17 @@ public class RoutingRules {
             pageQueue = config.getProperty("falcon.fb.care");
             messageBuilder.append(ERROR_MESSAGE);
         }
-        messageBuilder.append(pageQueue);
+        return returnResult(event, messageBuilder, pageQueue);
+    }
 
-        QueueInfo assignedQueueInfo = new QueueInfo(messageBuilder.toString(), pageQueue);
+    private QueueInfo returnResult(BotEvent event, StringBuilder messageBuilder, String queueId) {
+        messageBuilder.append(queueId);
+
+        QueueInfo assignedQueueInfo = new QueueInfo(messageBuilder.toString(), queueId);
         log.info(message("Work Queue assigned to this conversation: " + assignedQueueInfo.queueId(), "getAssignedWorkQueue")
-            .param(CONVERSATION_ID, conversationId).param(WORKQUEUE_ID, assignedQueueInfo.queueId()).param(MESSAGE, assignedQueueInfo.message()).param(CHANNEL_ID, channelId).param(REQUEST_ID, event.requestId()));
+            .param(WORKQUEUE_ID, assignedQueueInfo.queueId())
+            .param(MESSAGE, assignedQueueInfo.message())
+            .add(event.toLogContext()));
         return assignedQueueInfo;
     }
 
