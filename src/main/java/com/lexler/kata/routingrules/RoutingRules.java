@@ -65,10 +65,10 @@ public class RoutingRules {
                     }
                     return returnResult(event, messageBuilder, pageQueue);
                 } else {
-                    if (context.greece() && INSTAGRAM.equalsIgnoreCase(context.network())) {
+                    if (INSTAGRAM.equalsIgnoreCase(context.network())) {
                         pageQueue = config.getProperty("gr.instagram");
                         messageBuilder.append(FALCONAIR_CUSTOMER_GR_INSTAGRAM);
-                    } else if (context.greece() && FACEBOOK.equalsIgnoreCase(context.network())) {
+                    } else if (FACEBOOK.equalsIgnoreCase(context.network())) {
                         pageQueue = config.getProperty("gr.facebook");
                         messageBuilder.append(FALCONAIR_CUSTOMER_GR_FB);
                     }
