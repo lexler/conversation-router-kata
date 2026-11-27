@@ -17,4 +17,4 @@ bash tools/create-commit-message.sh proven refactor "extract method"
 
 ## Habit Hooks
 
-The `habit-hooks` branch adds code-smell sensors. Its `docs/habit-hooks.md` has the install steps.
+Habit Hooks runs code-smell sensors over the code. Install and usage: `docs/habit-hooks.md`. The loop an AI agent follows to clean up `RoutingRules`: `docs/processes/habit-hooks.process.md`.
