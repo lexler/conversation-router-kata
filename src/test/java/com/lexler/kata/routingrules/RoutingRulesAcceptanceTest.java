@@ -43,7 +43,7 @@ class RoutingRulesAcceptanceTest {
         });
         BotEvent event = new BotEvent("request-id-0", "500", new Coordinate("instagram", "5001"), "200", new CustomerInfo());
 
-        QueueInfo result = routingRulesWithFailingConfig.getAssignedWorkQueue(event, event.conversationId(), event.requestId(), event.channelId());
+        QueueInfo result = routingRulesWithFailingConfig.getAssignedWorkQueue(event);
 
         assertThat(result.message())
             .isEqualTo("An error occurred assigning workQueue. Sending to Facebook Falcon Care queue by default.201");
@@ -66,7 +66,7 @@ class RoutingRulesAcceptanceTest {
             new Coordinate(channel, pageId),
             "200",
             new CustomerInfo(brand, isBind, status, channel + "_" + pageId + "_200", authorTag, execMentionTag, disruptionTag));
-        QueueInfo result = routingRules.getAssignedWorkQueue(event, event.conversationId(), event.requestId(), event.channelId());
+        QueueInfo result = routingRules.getAssignedWorkQueue(event);
         return formatResult(event, result);
     }
 
