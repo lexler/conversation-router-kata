@@ -1,20 +1,17 @@
 package com.lexler.kata.routingrules;
 
-import com.lexler.kata.routingrules.log.Log;
-
 import java.util.Map;
 
-import static com.lexler.kata.routingrules.ConversationLog.conversationMessage;
 import static com.lexler.kata.routingrules.Page.Audience.*;
 import static com.lexler.kata.routingrules.Page.Channel.FACEBOOK;
 import static com.lexler.kata.routingrules.Page.Channel.INSTAGRAM;
+import static com.lexler.kata.routingrules.RoutingLog.conversationMessage;
+import static com.lexler.kata.routingrules.RoutingLog.log;
 import static com.lexler.kata.routingrules.constants.LogParams.CUSTOMER_BRAND;
 import static com.lexler.kata.routingrules.constants.LogParams.EVENT_STATUS;
 import static com.lexler.kata.routingrules.constants.RouteMessages.*;
 
 final class BrandRoutes {
-
-    private static final Log log = Log.forClass(RoutingRules.class);
 
     private static final Map<Page, Route> FALCONAIR_MARKET_ROUTES = Map.of(
         new Page(INSTAGRAM, GREECE), new Route("gr.instagram", FALCONAIR_CUSTOMER_GR_INSTAGRAM),
@@ -34,12 +31,12 @@ final class BrandRoutes {
         if (conversation.hasUnknownBrand()) {
             return unknownBrandRoute(conversation);
         }
-        log.info(conversationMessage(conversation.event(), "Checking customer brand.", "getAssignedWorkQueue"));
+        log.info(conversationMessage(conversation.event(), "Checking customer brand."));
         return conversation.isDuckWingsCustomer() ? duckWingsRoute(conversation) : falconAirRoute(conversation);
     }
 
     private Route falconAirRoute(Conversation conversation) {
-        log.info(conversationMessage(conversation.event(), "Customer identified as non DuckWings customer", "getAssignedWorkQueue")
+        log.info(conversationMessage(conversation.event(), "Customer identified as non DuckWings customer")
             .param(EVENT_STATUS, conversation.verificationStatus())
             .param(CUSTOMER_BRAND, conversation.brand()));
         Page page = conversation.page();
@@ -51,7 +48,7 @@ final class BrandRoutes {
     }
 
     private Route duckWingsRoute(Conversation conversation) {
-        log.info(conversationMessage(conversation.event(), "Customer identified as DuckWings customer", "getAssignedWorkQueue"));
+        log.info(conversationMessage(conversation.event(), "Customer identified as DuckWings customer"));
         Page page = conversation.page();
         return DUCKWINGS_MARKET_ROUTES.getOrDefault(page, duckWingsCareRoute(page));
     }
@@ -63,7 +60,7 @@ final class BrandRoutes {
     }
 
     private Route unknownBrandRoute(Conversation conversation) {
-        log.info(conversationMessage(conversation.event(), "Conversation has no customer brand. Assigning default falconair queue based on network type and pageid.", "getAssignedWorkQueue")
+        log.info(conversationMessage(conversation.event(), "Conversation has no customer brand. Assigning default falconair queue based on network type and pageid.")
             .param(CUSTOMER_BRAND, conversation.brand()));
         Page page = conversation.page();
         return switch (page.audience()) {

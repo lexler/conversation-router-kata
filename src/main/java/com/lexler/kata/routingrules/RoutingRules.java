@@ -2,22 +2,20 @@ package com.lexler.kata.routingrules;
 
 import com.lexler.kata.routingrules.config.RoutingConfig;
 import com.lexler.kata.routingrules.event.BotEvent;
-import com.lexler.kata.routingrules.log.Log;
 
 import java.util.Map;
 import java.util.TreeMap;
 
-import static com.lexler.kata.routingrules.ConversationLog.conversationMessage;
+import static com.lexler.kata.routingrules.RoutingLog.conversationMessage;
+import static com.lexler.kata.routingrules.RoutingLog.log;
+import static com.lexler.kata.routingrules.RoutingLog.routingMessage;
 import static com.lexler.kata.routingrules.constants.ConstantStrings.DUCKWINGS;
 import static com.lexler.kata.routingrules.constants.ConstantStrings.FALCONAIR;
 import static com.lexler.kata.routingrules.constants.ConstantStrings.GR;
 import static com.lexler.kata.routingrules.constants.LogParams.*;
 import static com.lexler.kata.routingrules.constants.RouteMessages.*;
-import static com.lexler.kata.routingrules.log.LogMessage.message;
 
 public class RoutingRules {
-
-    private static final Log log = Log.forClass(RoutingRules.class);
 
     private static final Map<String, Route> EXEC_TAG_ROUTES = ignoringCase(Map.of(
         FALCONAIR, new Route("falcon.exec.queue", AUTHOR_EXEC_FALCONAIR),
@@ -39,9 +37,9 @@ public class RoutingRules {
     }
 
     public QueueInfo getAssignedWorkQueue(BotEvent event) {
-        log.info(conversationMessage(event, "Determining workQueue the conversation belongs to", "getAssignedWorkQueue"));
+        log.info(conversationMessage(event, "Determining workQueue the conversation belongs to"));
         QueueInfo assignedQueueInfo = assignQueue(event);
-        log.info(message("Work Queue assigned to this conversation: " + assignedQueueInfo.queueId(), "getAssignedWorkQueue")
+        log.info(routingMessage("Work Queue assigned to this conversation: " + assignedQueueInfo.queueId())
             .param(CONVERSATION_ID, event.conversationId()).param(WORKQUEUE_ID, assignedQueueInfo.queueId()).param(MESSAGE, assignedQueueInfo.message()).param(CHANNEL_ID, event.channelId()).param(REQUEST_ID, event.requestId()));
         return assignedQueueInfo;
     }
@@ -53,7 +51,7 @@ public class RoutingRules {
             verificationNote = conversation.isVerified() ? VERIFIED : "";
             return queueInfo(verificationNote, routeFor(conversation));
         } catch (Exception e) {
-            log.error(message("An error occurred when trying to assign work queue id. Assigning default values", "getAssignedWorkQueue")
+            log.error(routingMessage("An error occurred when trying to assign work queue id. Assigning default values")
                 .param(EVENT, event)
                 .param(EXCEPTION, e.getMessage()));
             return queueInfo(verificationNote, Route.FALLBACK);
@@ -67,14 +65,14 @@ public class RoutingRules {
 
     private Conversation conversationOf(BotEvent event) {
         Page page = pages.pageAt(event.coordinate());
-        log.debug(conversationMessage(event, "Page: " + page, "getAssignedWorkQueue")
+        log.debug(conversationMessage(event, "Page: " + page)
             .param(PAGE_ID, event.coordinate().externalId()));
         return Conversation.of(event, page);
     }
 
     private Route routeFor(Conversation conversation) {
         if (conversation.awaitsVerification()) {
-            log.info(conversationMessage(conversation.event(), "Conversation is not bound, and status is empty or null. Assigning to the bot queue", "getAssignedWorkQueue")
+            log.info(conversationMessage(conversation.event(), "Conversation is not bound, and status is empty or null. Assigning to the bot queue")
                 .param(BIND_STATUS, conversation.isBound())
                 .param(EVENT_STATUS, conversation.verificationStatus()));
             return new Route("bot.queue", NOT_BOUND_BOT_QUEUE);
@@ -82,7 +80,7 @@ public class RoutingRules {
         if (!conversation.isReadyForSupportTeam()) {
             return Route.NOWHERE;
         }
-        log.info(conversationMessage(conversation.event(), "Conversation is either bound, bypassed or the timer expired. Assigning it to a new workQueue.", "getAssignedWorkQueue")
+        log.info(conversationMessage(conversation.event(), "Conversation is either bound, bypassed or the timer expired. Assigning it to a new workQueue.")
             .param(BIND_STATUS, conversation.isBound())
             .param(EVENT_STATUS, conversation.verificationStatus()));
         return supportTeamRoute(conversation);
@@ -99,14 +97,14 @@ public class RoutingRules {
     }
 
     private Route execTagRoute(Conversation conversation) {
-        log.info(conversationMessage(conversation.event(), "Conversation has Author Exec tags. Assigning to one of the exec queues", "getAssignedWorkQueue")
+        log.info(conversationMessage(conversation.event(), "Conversation has Author Exec tags. Assigning to one of the exec queues")
             .param(BIND_STATUS, conversation.isBound())
             .param(EVENT_STATUS, conversation.verificationStatus()));
         return EXEC_TAG_ROUTES.getOrDefault(conversation.execTag(), Route.NOWHERE);
     }
 
     private Route execMentionRoute(Conversation conversation) {
-        log.info(conversationMessage(conversation.event(), "Conversation has Exec mention tags.", "getAssignedWorkQueue")
+        log.info(conversationMessage(conversation.event(), "Conversation has Exec mention tags.")
             .param(EXEC_MENTION, conversation.execMention()));
         return EXEC_MENTION_ROUTES.getOrDefault(conversation.execMention(), Route.NOWHERE);
     }
