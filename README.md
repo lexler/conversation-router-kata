@@ -22,3 +22,4 @@ Java 25 via `mise`. On Windows, use `build_and_test.bat`. Setup, including the c
 
 - `docs/project.md`: the story in full
 - `docs/terms.md`: the domain language
+- `docs/habit-hooks.md`: install and set up Habit Hooks smell sensors, and `docs/processes/habit-hooks.process.md`: the cleanup loop for an AI agent
