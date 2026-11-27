@@ -118,18 +118,8 @@ public class RoutingRules {
                 } else {
                     return new Route("biz.facebook", NO_CUSTOMER_BRAND_BIZ_FB);
                 }
-            } else if (page.isOnInstagram()) {
-                if (conversation.mentionsDisruption()) {
-                    return new Route("falcon.instagram.disruption", DISRUPTION_MENTION + INSTAGRAM_CHANNEL);
-                } else {
-                    return new Route("falcon.instagram.care", NO_CUSTOMER_BRAND_INSTAGRAM);
-                }
             } else {
-                if (conversation.mentionsDisruption()) {
-                    return new Route("falcon.fb.disruption", DISRUPTION_MENTION + FACEBOOK_CHANNEL);
-                } else {
-                    return new Route("falcon.fb.care", NO_CUSTOMER_BRAND_FB);
-                }
+                return falconCareRoute(conversation, NO_CUSTOMER_BRAND_INSTAGRAM, NO_CUSTOMER_BRAND_FB);
             }
         } else {
             log.info(conversationMessage(conversation.event(), "Checking customer brand.", "getAssignedWorkQueue"));
@@ -166,21 +156,26 @@ public class RoutingRules {
                     return new Route("biz.facebook", FALCONAIR_CUSTOMER_BIZ_FB);
                 } else if (page.serves(BUSINESS) && page.isOnInstagram()) {
                     return new Route("biz.instagram", FALCONAIR_CUSTOMER_BIZ_INSTAGRAM);
-                } else if (page.isOnInstagram()) {
-                    if (conversation.mentionsDisruption()) {
-                        return new Route("falcon.instagram.disruption", DISRUPTION_MENTION + INSTAGRAM_CHANNEL);
-                    } else {
-                        return new Route("falcon.instagram.care", FALCONAIR_CUSTOMER_INSTAGRAM);
-                    }
                 } else {
-                    if (conversation.mentionsDisruption()) {
-                        return new Route("falcon.fb.disruption", DISRUPTION_MENTION + FACEBOOK_CHANNEL);
-                    } else {
-                        return new Route("falcon.fb.care", FALCONAIR_CUSTOMER_FB);
-                    }
+                    return falconCareRoute(conversation, FALCONAIR_CUSTOMER_INSTAGRAM, FALCONAIR_CUSTOMER_FB);
                 }
             }
         }
+    }
+
+    private static Route falconCareRoute(Conversation conversation, String instagramReason, String facebookReason) {
+        if (conversation.mentionsDisruption()) {
+            return disruptionRoute(conversation.page());
+        }
+        return conversation.page().isOnInstagram()
+            ? new Route("falcon.instagram.care", instagramReason)
+            : new Route("falcon.fb.care", facebookReason);
+    }
+
+    private static Route disruptionRoute(Page page) {
+        return page.isOnInstagram()
+            ? new Route("falcon.instagram.disruption", DISRUPTION_MENTION + INSTAGRAM_CHANNEL)
+            : new Route("falcon.fb.disruption", DISRUPTION_MENTION + FACEBOOK_CHANNEL);
     }
 
     private static Map<String, Route> ignoringCase(Map<String, Route> routesByTag) {
