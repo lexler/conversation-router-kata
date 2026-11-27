@@ -100,27 +100,7 @@ public class RoutingRules {
             return EXEC_MENTION_ROUTES.getOrDefault(conversation.execMention(), Route.NOWHERE);
         }
         if (conversation.hasUnknownBrand()) {
-            log.info(conversationMessage(conversation.event(), "Conversation has no customer brand. Assigning default falconair queue based on network type and pageid.", "getAssignedWorkQueue")
-                .param(CUSTOMER_BRAND, conversation.brand()));
-            if (page.serves(FRENCH_SPEAKERS)) {
-                return new Route("falcon.french.care", NO_CUSTOMER_BRAND_FRENCH_PAGE);
-            } else if (page.serves(GREECE)) {
-                if (page.isOnInstagram()) {
-                    return new Route("gr.instagram", NO_CUSTOMER_BRAND_GR_INSTAGRAM);
-                } else {
-                    return new Route("gr.facebook", NO_CUSTOMER_BRAND_GR_FB);
-                }
-            } else if (page.serves(CYPRUS)) {
-                return new Route("cy.facebook", NO_CUSTOMER_BRAND_CY_FB);
-            } else if (page.serves(BUSINESS)) {
-                if (page.isOnInstagram()) {
-                    return new Route("biz.instagram", NO_CUSTOMER_BRAND_BIZ_INSTAGRAM);
-                } else {
-                    return new Route("biz.facebook", NO_CUSTOMER_BRAND_BIZ_FB);
-                }
-            } else {
-                return falconCareRoute(conversation, NO_CUSTOMER_BRAND_INSTAGRAM, NO_CUSTOMER_BRAND_FB);
-            }
+            return unknownBrandRoute(conversation);
         } else {
             log.info(conversationMessage(conversation.event(), "Checking customer brand.", "getAssignedWorkQueue"));
             if (conversation.isDuckWingsCustomer()) {
@@ -161,6 +141,23 @@ public class RoutingRules {
                 }
             }
         }
+    }
+
+    private Route unknownBrandRoute(Conversation conversation) {
+        log.info(conversationMessage(conversation.event(), "Conversation has no customer brand. Assigning default falconair queue based on network type and pageid.", "getAssignedWorkQueue")
+            .param(CUSTOMER_BRAND, conversation.brand()));
+        Page page = conversation.page();
+        return switch (page.audience()) {
+            case FRENCH_SPEAKERS -> new Route("falcon.french.care", NO_CUSTOMER_BRAND_FRENCH_PAGE);
+            case GREECE -> page.isOnInstagram()
+                ? new Route("gr.instagram", NO_CUSTOMER_BRAND_GR_INSTAGRAM)
+                : new Route("gr.facebook", NO_CUSTOMER_BRAND_GR_FB);
+            case CYPRUS -> new Route("cy.facebook", NO_CUSTOMER_BRAND_CY_FB);
+            case BUSINESS -> page.isOnInstagram()
+                ? new Route("biz.instagram", NO_CUSTOMER_BRAND_BIZ_INSTAGRAM)
+                : new Route("biz.facebook", NO_CUSTOMER_BRAND_BIZ_FB);
+            case HOME_MARKET -> falconCareRoute(conversation, NO_CUSTOMER_BRAND_INSTAGRAM, NO_CUSTOMER_BRAND_FB);
+        };
     }
 
     private static Route falconCareRoute(Conversation conversation, String instagramReason, String facebookReason) {
