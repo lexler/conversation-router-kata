@@ -16,7 +16,7 @@ The kata: refactor that method into code the team can change again, without chan
 ./build_and_test.sh
 ```
 
-Java 25 via `mise`. On Windows, use `build_and_test.bat`.
+Java 25 via `mise`. On Windows, use `build_and_test.bat`. Setup, including the commit notation: `docs/setup.md`.
 
 ## More
 
