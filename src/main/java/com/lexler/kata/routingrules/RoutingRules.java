@@ -22,6 +22,13 @@ public class RoutingRules {
 
     private static final Log log = Log.forClass(RoutingRules.class);
 
+    private static final Map<Page, Route> FALCONAIR_MARKET_ROUTES = Map.of(
+        new Page(INSTAGRAM, GREECE), new Route("gr.instagram", FALCONAIR_CUSTOMER_GR_INSTAGRAM),
+        new Page(FACEBOOK, GREECE), new Route("gr.facebook", FALCONAIR_CUSTOMER_GR_FB),
+        new Page(FACEBOOK, CYPRUS), new Route("cy.facebook", FALCONAIR_CUSTOMER_CY_FB),
+        new Page(FACEBOOK, BUSINESS), new Route("biz.facebook", FALCONAIR_CUSTOMER_BIZ_FB),
+        new Page(INSTAGRAM, BUSINESS), new Route("biz.instagram", FALCONAIR_CUSTOMER_BIZ_INSTAGRAM));
+
     private static final Map<Page, Route> DUCKWINGS_MARKET_ROUTES = Map.of(
         new Page(INSTAGRAM, FRENCH_SPEAKERS), new Route("duck.french.instagram", DUCKWINGS_CUSTOMER_FRENCH_INSTAGRAM),
         new Page(FACEBOOK, FRENCH_SPEAKERS), new Route("duck.french.fb", DUCKWINGS_CUSTOMER_FRENCH_FB),
@@ -98,7 +105,6 @@ public class RoutingRules {
     }
 
     private Route supportTeamRoute(Conversation conversation) {
-        Page page = conversation.page();
         if (conversation.hasExecTag()) {
             log.info(conversationMessage(conversation.event(), "Conversation has Author Exec tags. Assigning to one of the exec queues", "getAssignedWorkQueue")
                 .param(BIND_STATUS, conversation.isBound())
@@ -116,27 +122,21 @@ public class RoutingRules {
             log.info(conversationMessage(conversation.event(), "Checking customer brand.", "getAssignedWorkQueue"));
             if (conversation.isDuckWingsCustomer()) {
                 return duckWingsRoute(conversation);
-            } else {
-                log.info(conversationMessage(conversation.event(), "Customer identified as non DuckWings customer", "getAssignedWorkQueue")
-                    .param(EVENT_STATUS, conversation.verificationStatus())
-                    .param(CUSTOMER_BRAND, conversation.brand()));
-                if (page.serves(FRENCH_SPEAKERS)) {
-                    return new Route("falcon.french.care", FALCONAIR_CUSTOMER_FRENCH);
-                } else if (page.serves(GREECE) && page.isOnInstagram()) {
-                    return new Route("gr.instagram", FALCONAIR_CUSTOMER_GR_INSTAGRAM);
-                } else if (page.serves(GREECE) && page.isOnFacebook()) {
-                    return new Route("gr.facebook", FALCONAIR_CUSTOMER_GR_FB);
-                } else if (page.serves(CYPRUS) && page.isOnFacebook()) {
-                    return new Route("cy.facebook", FALCONAIR_CUSTOMER_CY_FB);
-                } else if (page.serves(BUSINESS) && page.isOnFacebook()) {
-                    return new Route("biz.facebook", FALCONAIR_CUSTOMER_BIZ_FB);
-                } else if (page.serves(BUSINESS) && page.isOnInstagram()) {
-                    return new Route("biz.instagram", FALCONAIR_CUSTOMER_BIZ_INSTAGRAM);
-                } else {
-                    return falconCareRoute(conversation, FALCONAIR_CUSTOMER_INSTAGRAM, FALCONAIR_CUSTOMER_FB);
-                }
             }
+            return falconAirRoute(conversation);
         }
+    }
+
+    private Route falconAirRoute(Conversation conversation) {
+        log.info(conversationMessage(conversation.event(), "Customer identified as non DuckWings customer", "getAssignedWorkQueue")
+            .param(EVENT_STATUS, conversation.verificationStatus())
+            .param(CUSTOMER_BRAND, conversation.brand()));
+        Page page = conversation.page();
+        if (page.serves(FRENCH_SPEAKERS)) {
+            return new Route("falcon.french.care", FALCONAIR_CUSTOMER_FRENCH);
+        }
+        return FALCONAIR_MARKET_ROUTES.getOrDefault(page,
+            falconCareRoute(conversation, FALCONAIR_CUSTOMER_INSTAGRAM, FALCONAIR_CUSTOMER_FB));
     }
 
     private Route duckWingsRoute(Conversation conversation) {
