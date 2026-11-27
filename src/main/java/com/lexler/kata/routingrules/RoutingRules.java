@@ -2,14 +2,11 @@ package com.lexler.kata.routingrules;
 
 import com.lexler.kata.routingrules.config.RoutingConfig;
 import com.lexler.kata.routingrules.event.BotEvent;
-import com.lexler.kata.routingrules.event.CustomerInfo;
 import com.lexler.kata.routingrules.log.Log;
 import com.lexler.kata.routingrules.log.LogMessage;
-import com.lexler.kata.routingrules.util.StringUtils;
 
 import static com.lexler.kata.routingrules.Page.Audience.*;
 import static com.lexler.kata.routingrules.constants.ConstantStrings.*;
-import static com.lexler.kata.routingrules.constants.DefaultStrings.*;
 import static com.lexler.kata.routingrules.constants.LogParams.*;
 import static com.lexler.kata.routingrules.constants.RouteMessages.*;
 import static com.lexler.kata.routingrules.log.LogMessage.message;
@@ -38,69 +35,63 @@ public class RoutingRules {
             log.debug(conversationMessage(event, "Page: " + page, "getAssignedWorkQueue")
                 .param(PAGE_ID, event.coordinate().externalId()));
 
-            CustomerInfo customerInfo = event.customerInfo() == null ? new CustomerInfo() : event.customerInfo();
-            boolean bound = customerInfo.bind();
-            String status = StringUtils.isEmpty(customerInfo.status()) ? NO_STATUS : customerInfo.status();
-            String authorTag = StringUtils.isEmpty(customerInfo.authorExecTag()) ? NO_AUTHOR_EXEC_TAG : customerInfo.authorExecTag();
-            String execMention = StringUtils.isEmpty(customerInfo.execMentionTag()) ? NO_EXEC_MENTION_TAG : customerInfo.execMentionTag();
-            String disruptionTag = StringUtils.isEmpty(customerInfo.disruptionMentionTag()) ? NO_DISRUPTION_TAG : customerInfo.disruptionMentionTag();
-            String customerBrand = StringUtils.isEmpty(customerInfo.customerBrand()) ? NO_CUSTOMER_BRAND : customerInfo.customerBrand();
+            Conversation conversation = Conversation.of(event, page);
 
             //route to bot queue if convo is not bound and needs to wait on timer function
-            if (!bound && NO_STATUS.equalsIgnoreCase(status)) {
+            if (conversation.awaitsVerification()) {
                 log.info(conversationMessage(event, "Conversation is not bound, and status is empty or null. Assigning to the bot queue", "getAssignedWorkQueue")
-                    .param(BIND_STATUS, bound)
-                    .param(EVENT_STATUS, status));
+                    .param(BIND_STATUS, conversation.isBound())
+                    .param(EVENT_STATUS, conversation.verificationStatus()));
 
                 pageQueue = config.getProperty("bot.queue");
                 messageBuilder.append(NOT_BOUND_BOT_QUEUE);
 
                 //if convo is bound or is timer function event
-            } else if ((bound || status.contains(EXPIRED) || status.contains(SUBMITTED) || status.contains(BYPASS))) {
+            } else if (conversation.isReadyForSupportTeam()) {
                 log.info(conversationMessage(event, "Conversation is either bound, bypassed or the timer expired. Assigning it to a new workQueue.", "getAssignedWorkQueue")
-                    .param(BIND_STATUS, bound)
-                    .param(EVENT_STATUS, status));
+                    .param(BIND_STATUS, conversation.isBound())
+                    .param(EVENT_STATUS, conversation.verificationStatus()));
 
                 //if already bound/or completed bind add verified message to output message
-                if (bound || status.contains(SUBMITTED)) {
+                if (conversation.isVerified()) {
                     messageBuilder.append(VERIFIED);
                 }
 
                 //check if author has exec tags, put into exec queue according to which author tag is added. customer type does not indicate queue in this case.
-                if (!(NO_AUTHOR_EXEC_TAG.equalsIgnoreCase(authorTag))) {
+                if (conversation.hasExecTag()) {
                     log.info(conversationMessage(event, "Conversation has Author Exec tags. Assigning to one of the exec queues", "getAssignedWorkQueue")
-                        .param(BIND_STATUS, bound)
-                        .param(EVENT_STATUS, status));
-                    if (FALCONAIR.equalsIgnoreCase(authorTag)) {
+                        .param(BIND_STATUS, conversation.isBound())
+                        .param(EVENT_STATUS, conversation.verificationStatus()));
+                    if (FALCONAIR.equalsIgnoreCase(conversation.execTag())) {
                         pageQueue = config.getProperty("falcon.exec.queue");
                         messageBuilder.append(AUTHOR_EXEC_FALCONAIR);
-                    } else if (DUCKWINGS.equalsIgnoreCase(authorTag)) {
+                    } else if (DUCKWINGS.equalsIgnoreCase(conversation.execTag())) {
                         pageQueue = config.getProperty("duckwings.exec.queue");
                         messageBuilder.append(AUTHOR_EXEC_DUCKWINGS);
-                    } else if (GR.equalsIgnoreCase(authorTag)) {
+                    } else if (GR.equalsIgnoreCase(conversation.execTag())) {
                         pageQueue = config.getProperty("gr.exec.queue");
                         messageBuilder.append(AUTHOR_EXEC_GR);
                     }
                     //check if convo has exec tags put into exec queue according to which exec is mentioned. customer type does not indicate queue in this case.
-                } else if (!NO_EXEC_MENTION_TAG.equalsIgnoreCase(execMention)) {
+                } else if (conversation.hasExecMention()) {
                     log.info(conversationMessage(event, "Conversation has Exec mention tags.", "getAssignedWorkQueue")
-                        .param(EXEC_MENTION, execMention));
+                        .param(EXEC_MENTION, conversation.execMention()));
 
-                    if (FALCONAIR.equalsIgnoreCase(execMention)) {
+                    if (FALCONAIR.equalsIgnoreCase(conversation.execMention())) {
                         pageQueue = config.getProperty("falcon.exec.queue");
                         messageBuilder.append(EXEC_MENTION_FALCONAIR);
-                    } else if (DUCKWINGS.equalsIgnoreCase(execMention)) {
+                    } else if (DUCKWINGS.equalsIgnoreCase(conversation.execMention())) {
                         pageQueue = config.getProperty("duckwings.exec.queue");
                         messageBuilder.append(EXEC_MENTION_DUCKWINGS);
-                    } else if (GR.equalsIgnoreCase(execMention)) {
+                    } else if (GR.equalsIgnoreCase(conversation.execMention())) {
                         pageQueue = config.getProperty("gr.exec.queue");
                         messageBuilder.append(EXEC_MENTION_GR);
                     }
 
                     //if no exec tags are present in conversation& author, assign based on customerType and pageId
-                } else if (customerBrand.isEmpty() || NO_CUSTOMER_BRAND.equalsIgnoreCase(customerBrand)) {
+                } else if (conversation.hasUnknownBrand()) {
                     log.info(conversationMessage(event, "Conversation has no customer brand. Assigning default falconair queue based on network type and pageid.", "getAssignedWorkQueue")
-                        .param(CUSTOMER_BRAND, customerBrand));
+                        .param(CUSTOMER_BRAND, conversation.brand()));
                     //this indicated either a failure in LoyaltyHub api call, customer was not found, or we have not reAuthed person yet and no DB info was found
                     if (page.serves(FRENCH_SPEAKERS)) {
                         pageQueue = config.getProperty("falcon.french.care");
@@ -125,7 +116,7 @@ public class RoutingRules {
                             messageBuilder.append(NO_CUSTOMER_BRAND_BIZ_FB);
                         }
                     } else if (page.isOnInstagram()) {
-                        if (DISRUPTION.equalsIgnoreCase(disruptionTag)) {
+                        if (conversation.mentionsDisruption()) {
                             pageQueue = config.getProperty("falcon.instagram.disruption");
                             messageBuilder.append(DISRUPTION_MENTION);
                             messageBuilder.append(INSTAGRAM_CHANNEL);
@@ -134,7 +125,7 @@ public class RoutingRules {
                             messageBuilder.append(NO_CUSTOMER_BRAND_INSTAGRAM);
                         }
                     } else {//falcon and fb channel
-                        if (DISRUPTION.equalsIgnoreCase(disruptionTag)) {
+                        if (conversation.mentionsDisruption()) {
                             pageQueue = config.getProperty("falcon.fb.disruption");
                             messageBuilder.append(DISRUPTION_MENTION);
                             messageBuilder.append(FACEBOOK_CHANNEL);
@@ -146,7 +137,7 @@ public class RoutingRules {
                 } else {//at this point expecting customer brand and/or bind/status details to be present without exect tags
                     log.info(conversationMessage(event, "Checking customer brand.", "getAssignedWorkQueue"));
 
-                    if (DUCKWINGS.equalsIgnoreCase(customerBrand)) {
+                    if (conversation.isDuckWingsCustomer()) {
                         log.info(conversationMessage(event, "Customer identified as DuckWings customer", "getAssignedWorkQueue"));
                         if (page.serves(FRENCH_SPEAKERS) && page.isOnInstagram()) {
                             pageQueue = config.getProperty("duck.french.instagram");
@@ -172,8 +163,8 @@ public class RoutingRules {
                         }
                     } else {//customer is falconair or prospect (or not in merged loyalty DB yet)
                         log.info(conversationMessage(event, "Customer identified as non DuckWings customer", "getAssignedWorkQueue")
-                            .param(EVENT_STATUS, status)
-                            .param(CUSTOMER_BRAND, customerBrand));
+                            .param(EVENT_STATUS, conversation.verificationStatus())
+                            .param(CUSTOMER_BRAND, conversation.brand()));
                         if (page.serves(FRENCH_SPEAKERS)) {
                             pageQueue = config.getProperty("falcon.french.care");
                             messageBuilder.append(FALCONAIR_CUSTOMER_FRENCH);
@@ -193,7 +184,7 @@ public class RoutingRules {
                             pageQueue = config.getProperty("biz.instagram");
                             messageBuilder.append(FALCONAIR_CUSTOMER_BIZ_INSTAGRAM);
                         } else if (page.isOnInstagram()) {
-                            if (DISRUPTION.equalsIgnoreCase(disruptionTag)) {
+                            if (conversation.mentionsDisruption()) {
                                 pageQueue = config.getProperty("falcon.instagram.disruption");
                                 messageBuilder.append(DISRUPTION_MENTION);
                                 messageBuilder.append(INSTAGRAM_CHANNEL);
@@ -203,7 +194,7 @@ public class RoutingRules {
                             }
 
                         } else {//falcon and fb channel
-                            if (DISRUPTION.equalsIgnoreCase(disruptionTag)) {
+                            if (conversation.mentionsDisruption()) {
                                 pageQueue = config.getProperty("falcon.fb.disruption");
                                 messageBuilder.append(DISRUPTION_MENTION);
                                 messageBuilder.append(FACEBOOK_CHANNEL);
