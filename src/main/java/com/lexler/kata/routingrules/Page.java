@@ -22,10 +22,6 @@ record Page(Channel channel, Audience audience) {
         HOME_MARKET, FRENCH_SPEAKERS, GREECE, CYPRUS, BUSINESS
     }
 
-    boolean isOnFacebook() {
-        return channel == Channel.FACEBOOK;
-    }
-
     boolean isOnInstagram() {
         return channel == Channel.INSTAGRAM;
     }
