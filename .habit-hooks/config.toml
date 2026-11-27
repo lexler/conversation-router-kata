@@ -1,4 +1,0 @@
-plugins = ["java", "generic"]
-files = [
-  "src/main/java/**/*.java",
-]

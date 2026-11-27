@@ -14,7 +14,3 @@ Commits follow Arlo's commit notation, `<risk> <intention> <description>`, descr
 bash tools/create-commit-message.sh proven refactor "extract method"
 - r extract method
 ```
-
-## Habit Hooks
-
-Habit Hooks runs code-smell sensors over the code. Install and usage: `docs/habit-hooks.md`. The loop an AI agent follows to clean up `RoutingRules`: `docs/processes/habit-hooks.process.md`.
