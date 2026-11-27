@@ -29,7 +29,9 @@ class RoutingRulesAcceptanceTest {
         String[] authorTags = new String[]{"", "NO_EXEC_MENTION_TAG", "NO_AUTHOR_EXEC_TAG", "FalconAir", "DuckWings", "GR"};
         String[] execMentionTags = new String[]{"", "FalconAir", "DuckWings", "GR"};
         String[] disruptionTags = new String[]{"NO_DISRUPTION_TAG", "Disruption"};
-        CombinationApprovals.verifyAllCombinations(this::assignWorkQueue,
+        CombinationApprovals.verifyAllCombinations(
+            (channelId, brand, bound, status, authorTag, execMentionTag, disruptionTag) ->
+                assignWorkQueue(new CustomerInfo(brand, bound, status, channelId, authorTag, execMentionTag, disruptionTag)),
             channelIds, brands, bindStatuses, statuses, authorTags, execMentionTags, disruptionTags);
     }
 
@@ -51,21 +53,10 @@ class RoutingRulesAcceptanceTest {
             .isEqualTo("201");
     }
 
-    private String assignWorkQueue(String channelId,
-                                   String brand,
-                                   boolean isBind,
-                                   String status,
-                                   String authorTag,
-                                   String execMentionTag,
-                                   String disruptionTag) {
-        String channel = ChannelIdParser.getChannel(channelId);
-        String pageId = ChannelIdParser.getPageId(channelId);
-        BotEvent event = new BotEvent(
-            "request-id-0",
-            "500",
-            new Coordinate(channel, pageId),
-            "200",
-            new CustomerInfo(brand, isBind, status, channel + "_" + pageId + "_200", authorTag, execMentionTag, disruptionTag));
+    private String assignWorkQueue(CustomerInfo customer) {
+        String channel = ChannelIdParser.getChannel(customer.channelId());
+        String pageId = ChannelIdParser.getPageId(customer.channelId());
+        BotEvent event = new BotEvent("request-id-0", "500", new Coordinate(channel, pageId), "200", customer);
         QueueInfo result = routingRules.getAssignedWorkQueue(event);
         return formatResult(event, result);
     }
