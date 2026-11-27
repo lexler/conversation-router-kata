@@ -21,7 +21,7 @@ class RoutingRulesTest {
             new Scenario(1, "Unverified customer writes on a home market Facebook page",
                 conversationOn("facebook", "5001", new CustomerInfo())));
 
-        Approvals.verifyAll(tableOfContents(scenarios), scenarios, this::storyboard, new Options().forFile().withExtension(".md"));
+        Approvals.verifyAll(tableOfContents(scenarios), scenarios, this::scenarioSection, new Options().forFile().withExtension(".md"));
     }
 
     private record Scenario(int number, String title, BotEvent event) {
@@ -37,33 +37,13 @@ class RoutingRulesTest {
             .collect(Collectors.joining("\n"));
     }
 
-    private String storyboard(Scenario scenario) {
+    private String scenarioSection(Scenario scenario) {
         return """
             ### Scenario %s
             #### %s
             ```
             %s```
             ---
-            """.formatted(scenario.number(), scenario.title(), routingOf(scenario.event()));
-    }
-
-    private String routingOf(BotEvent event) {
-        CustomerInfo customer = event.customerInfo();
-        QueueInfo routing = routingRules.getAssignedWorkQueue(event);
-        return line("Conversation", "%s page %s".formatted(event.coordinate().networkKey(), event.coordinate().externalId()))
-            + line("Customer", "brand %s, %s, verification status %s".formatted(
-                orNone(customer.customerBrand()), customer.bind() ? "bound" : "not bound", orNone(customer.status())))
-            + line("Tags", "exec tag %s, exec mention %s, disruption mention %s".formatted(
-                orNone(customer.authorExecTag()), orNone(customer.execMentionTag()), orNone(customer.disruptionMentionTag())))
-            + line("Router", "queue " + routing.queueId())
-            + line("Router", routing.message());
-    }
-
-    private String line(String speaker, String text) {
-        return "[%12s]: %s\n".formatted(speaker, text);
-    }
-
-    private String orNone(String value) {
-        return value == null || value.isEmpty() ? "none" : value;
+            """.formatted(scenario.number(), scenario.title(), RoutingStoryboard.create(routingRules, scenario.event()));
     }
 }
