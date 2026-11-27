@@ -7,6 +7,7 @@ import com.lexler.kata.routingrules.log.Log;
 import com.lexler.kata.routingrules.log.LogMessage;
 import com.lexler.kata.routingrules.util.StringUtils;
 
+import static com.lexler.kata.routingrules.Page.Audience.*;
 import static com.lexler.kata.routingrules.constants.ConstantStrings.*;
 import static com.lexler.kata.routingrules.constants.DefaultStrings.*;
 import static com.lexler.kata.routingrules.constants.LogParams.*;
@@ -18,9 +19,11 @@ public class RoutingRules {
     private static final Log log = Log.forClass(RoutingRules.class);
 
     private final RoutingConfig config;
+    private final Pages pages;
 
     public RoutingRules(RoutingConfig config) {
         this.config = config;
+        this.pages = new Pages(config);
     }
 
     public QueueInfo getAssignedWorkQueue(BotEvent event) {
@@ -31,22 +34,9 @@ public class RoutingRules {
         StringBuilder messageBuilder = new StringBuilder(130);
 
         try {
-            String externalId = event.coordinate().externalId();
-            boolean french = isFrenchPage(event);
-            log.debug(conversationMessage(event, "French: " + french, "getAssignedWorkQueue")
-                .param(PAGE_ID, externalId));
-
-            boolean greece = isGreecePage(event);
-            log.debug(conversationMessage(event, "Greece: " + greece, "getAssignedWorkQueue")
-                .param(PAGE_ID, externalId));
-
-            boolean cyprus = isCyprus(event);
-            log.debug(conversationMessage(event, "Cyprus : " + cyprus, "getAssignedWorkQueue")
-                .param(PAGE_ID, externalId));
-
-            boolean biz = isBiz(event);
-            log.debug(conversationMessage(event, "FalconAir Business : " + biz, "getAssignedWorkQueue")
-                .param(PAGE_ID, externalId));
+            Page page = pages.pageAt(event.coordinate());
+            log.debug(conversationMessage(event, "Page: " + page, "getAssignedWorkQueue")
+                .param(PAGE_ID, event.coordinate().externalId()));
 
             CustomerInfo customerInfo = event.customerInfo() == null ? new CustomerInfo() : event.customerInfo();
             boolean bound = customerInfo.bind();
@@ -55,7 +45,6 @@ public class RoutingRules {
             String execMention = StringUtils.isEmpty(customerInfo.execMentionTag()) ? NO_EXEC_MENTION_TAG : customerInfo.execMentionTag();
             String disruptionTag = StringUtils.isEmpty(customerInfo.disruptionMentionTag()) ? NO_DISRUPTION_TAG : customerInfo.disruptionMentionTag();
             String customerBrand = StringUtils.isEmpty(customerInfo.customerBrand()) ? NO_CUSTOMER_BRAND : customerInfo.customerBrand();
-            String network = event.coordinate().networkKey();
 
             //route to bot queue if convo is not bound and needs to wait on timer function
             if (!bound && NO_STATUS.equalsIgnoreCase(status)) {
@@ -113,29 +102,29 @@ public class RoutingRules {
                     log.info(conversationMessage(event, "Conversation has no customer brand. Assigning default falconair queue based on network type and pageid.", "getAssignedWorkQueue")
                         .param(CUSTOMER_BRAND, customerBrand));
                     //this indicated either a failure in LoyaltyHub api call, customer was not found, or we have not reAuthed person yet and no DB info was found
-                    if (french) {
+                    if (page.serves(FRENCH_SPEAKERS)) {
                         pageQueue = config.getProperty("falcon.french.care");
                         messageBuilder.append(NO_CUSTOMER_BRAND_FRENCH_PAGE);
-                    } else if (greece) {
-                        if (INSTAGRAM.equalsIgnoreCase(network)) {
+                    } else if (page.serves(GREECE)) {
+                        if (page.isOnInstagram()) {
                             pageQueue = config.getProperty("gr.instagram");
                             messageBuilder.append(NO_CUSTOMER_BRAND_GR_INSTAGRAM);
                         } else {
                             pageQueue = config.getProperty("gr.facebook");
                             messageBuilder.append(NO_CUSTOMER_BRAND_GR_FB);
                         }
-                    } else if (cyprus) {
+                    } else if (page.serves(CYPRUS)) {
                         pageQueue = config.getProperty("cy.facebook");
                         messageBuilder.append(NO_CUSTOMER_BRAND_CY_FB);
-                    } else if (biz) {
-                        if (INSTAGRAM.equalsIgnoreCase(network)) {
+                    } else if (page.serves(BUSINESS)) {
+                        if (page.isOnInstagram()) {
                             pageQueue = config.getProperty("biz.instagram");
                             messageBuilder.append(NO_CUSTOMER_BRAND_BIZ_INSTAGRAM);
                         } else {
                             pageQueue = config.getProperty("biz.facebook");
                             messageBuilder.append(NO_CUSTOMER_BRAND_BIZ_FB);
                         }
-                    } else if (INSTAGRAM.equalsIgnoreCase(network)) {
+                    } else if (page.isOnInstagram()) {
                         if (DISRUPTION.equalsIgnoreCase(disruptionTag)) {
                             pageQueue = config.getProperty("falcon.instagram.disruption");
                             messageBuilder.append(DISRUPTION_MENTION);
@@ -159,22 +148,22 @@ public class RoutingRules {
 
                     if (DUCKWINGS.equalsIgnoreCase(customerBrand)) {
                         log.info(conversationMessage(event, "Customer identified as DuckWings customer", "getAssignedWorkQueue"));
-                        if (french && INSTAGRAM.equalsIgnoreCase(network)) {
+                        if (page.serves(FRENCH_SPEAKERS) && page.isOnInstagram()) {
                             pageQueue = config.getProperty("duck.french.instagram");
                             messageBuilder.append(DUCKWINGS_CUSTOMER_FRENCH_INSTAGRAM);
-                        } else if (french && FACEBOOK.equalsIgnoreCase(network)) {
+                        } else if (page.serves(FRENCH_SPEAKERS) && page.isOnFacebook()) {
                             pageQueue = config.getProperty("duck.french.fb");
                             messageBuilder.append(DUCKWINGS_CUSTOMER_FRENCH_FB);
-                        } else if (greece && INSTAGRAM.equalsIgnoreCase(network)) {
+                        } else if (page.serves(GREECE) && page.isOnInstagram()) {
                             pageQueue = config.getProperty("duck.gr.instagram");
                             messageBuilder.append(DUCKWINGS_CUSTOMER_GR_INSTAGRAM);
-                        } else if (greece && FACEBOOK.equalsIgnoreCase(network)) {
+                        } else if (page.serves(GREECE) && page.isOnFacebook()) {
                             pageQueue = config.getProperty("duck.gr.fb");
                             messageBuilder.append(DUCKWINGS_CUSTOMER_GR_FB);
-                        } else if (cyprus && FACEBOOK.equalsIgnoreCase(network)) {
+                        } else if (page.serves(CYPRUS) && page.isOnFacebook()) {
                             pageQueue = config.getProperty("duck.cy.facebook");
                             messageBuilder.append(DUCKWINGS_CUSTOMER_CY_FB);
-                        } else if (INSTAGRAM.equalsIgnoreCase(network)) {
+                        } else if (page.isOnInstagram()) {
                             pageQueue = config.getProperty("duck.care.instagram");
                             messageBuilder.append(DUCKWINGS_CUSTOMER_INSTAGRAM);
                         } else {
@@ -185,25 +174,25 @@ public class RoutingRules {
                         log.info(conversationMessage(event, "Customer identified as non DuckWings customer", "getAssignedWorkQueue")
                             .param(EVENT_STATUS, status)
                             .param(CUSTOMER_BRAND, customerBrand));
-                        if (french) {
+                        if (page.serves(FRENCH_SPEAKERS)) {
                             pageQueue = config.getProperty("falcon.french.care");
                             messageBuilder.append(FALCONAIR_CUSTOMER_FRENCH);
-                        } else if (greece && INSTAGRAM.equalsIgnoreCase(network)) {
+                        } else if (page.serves(GREECE) && page.isOnInstagram()) {
                             pageQueue = config.getProperty("gr.instagram");
                             messageBuilder.append(FALCONAIR_CUSTOMER_GR_INSTAGRAM);
-                        } else if (greece && FACEBOOK.equalsIgnoreCase(network)) {
+                        } else if (page.serves(GREECE) && page.isOnFacebook()) {
                             pageQueue = config.getProperty("gr.facebook");
                             messageBuilder.append(FALCONAIR_CUSTOMER_GR_FB);
-                        } else if (cyprus && FACEBOOK.equalsIgnoreCase(network)) {
+                        } else if (page.serves(CYPRUS) && page.isOnFacebook()) {
                             pageQueue = config.getProperty("cy.facebook");
                             messageBuilder.append(FALCONAIR_CUSTOMER_CY_FB);
-                        } else if (biz && FACEBOOK.equalsIgnoreCase(network)) {
+                        } else if (page.serves(BUSINESS) && page.isOnFacebook()) {
                             pageQueue = config.getProperty("biz.facebook");
                             messageBuilder.append(FALCONAIR_CUSTOMER_BIZ_FB);
-                        } else if (biz && INSTAGRAM.equalsIgnoreCase(network)) {
+                        } else if (page.serves(BUSINESS) && page.isOnInstagram()) {
                             pageQueue = config.getProperty("biz.instagram");
                             messageBuilder.append(FALCONAIR_CUSTOMER_BIZ_INSTAGRAM);
-                        } else if (INSTAGRAM.equalsIgnoreCase(network)) {
+                        } else if (page.isOnInstagram()) {
                             if (DISRUPTION.equalsIgnoreCase(disruptionTag)) {
                                 pageQueue = config.getProperty("falcon.instagram.disruption");
                                 messageBuilder.append(DISRUPTION_MENTION);
@@ -241,41 +230,6 @@ public class RoutingRules {
         log.info(message("Work Queue assigned to this conversation: " + assignedQueueInfo.queueId(), "getAssignedWorkQueue")
             .param(CONVERSATION_ID, event.conversationId()).param(WORKQUEUE_ID, assignedQueueInfo.queueId()).param(MESSAGE, assignedQueueInfo.message()).param(CHANNEL_ID, event.channelId()).param(REQUEST_ID, event.requestId()));
         return assignedQueueInfo;
-    }
-
-    public boolean isFrenchPage(BotEvent event) {
-        String pageId = event.coordinate().externalId();
-        log.debug(conversationMessage(event, "checking conversation page id if french page. " + pageId, "isFrenchPage"));
-        String falconInstagramFr = config.getProperty("falcon.instagram.fr.pageid");
-        String falconFbFr = config.getProperty("falcon.fb.french.pageid");
-        String duckInstagramFr = config.getProperty("duck.instagram.fr.pageid");
-        String duckFbFr = config.getProperty("duck.fb.french.pagid");
-        return pageId.equalsIgnoreCase(falconInstagramFr) || pageId.equalsIgnoreCase(falconFbFr) || pageId.equalsIgnoreCase(duckInstagramFr) || pageId.equalsIgnoreCase(duckFbFr);
-    }
-
-    public boolean isGreecePage(BotEvent event) {
-        String pageId = event.coordinate().externalId();
-        log.debug(conversationMessage(event, "checking page id if greece page. " + pageId, "isGreecePage"));
-        String falconInstagramGr = config.getProperty("falcon.instagram.gr.pageid");
-        String falconFbGr = config.getProperty("falcon.fb.gr.pageid");
-        String duckInstagramGr = config.getProperty("duck.instagram.gr.pageid");
-        String duckFbGr = config.getProperty("duck.fb.gr.pagid");
-        return pageId.equalsIgnoreCase(falconInstagramGr) || pageId.equalsIgnoreCase(falconFbGr) || pageId.equalsIgnoreCase(duckInstagramGr) || pageId.equalsIgnoreCase(duckFbGr);
-    }
-
-    public boolean isCyprus(BotEvent event) {
-        String pageId = event.coordinate().externalId();
-        log.debug(conversationMessage(event, "checking page id if cyprus page. " + pageId, "isCyprus"));
-        String falconFbCy = config.getProperty("falcon.facebook.cy.pageid");
-        return pageId.equalsIgnoreCase(falconFbCy);
-    }
-
-    public boolean isBiz(BotEvent event) {
-        String pageId = event.coordinate().externalId();
-        log.debug(conversationMessage(event, "checking page id if Biz page. " + pageId, "isBiz"));
-        String falconInstagramBiz = config.getProperty("falcon.instagram.biz.pageid");
-        String falconFbBiz = config.getProperty("falcon.fb.biz.pageid");
-        return pageId.equalsIgnoreCase(falconInstagramBiz) || pageId.equalsIgnoreCase(falconFbBiz);
     }
 
     private static LogMessage conversationMessage(BotEvent event, String text, String method) {
