@@ -8,5 +8,5 @@
 6. [ ] clean until everything is clean
 7. [ ] read the bug file
 
-
 run habit hooks all, follow the habit-hooks.process.md file, fix one smell at a time and one commit per smell. keep looping until all smells are fixed. 
+

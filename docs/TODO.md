@@ -1,0 +1,1 @@
+[ ] Write smallest possible approval test that Claude can come up with 
