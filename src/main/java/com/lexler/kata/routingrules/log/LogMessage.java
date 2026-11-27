@@ -17,6 +17,11 @@ public final class LogMessage {
         return this;
     }
 
+    public LogMessage add(String context) {
+        text.append(context);
+        return this;
+    }
+
     @Override
     public String toString() {
         return text.toString();
