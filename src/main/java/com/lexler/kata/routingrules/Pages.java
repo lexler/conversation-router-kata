@@ -41,6 +41,6 @@ final class Pages {
     private boolean isAnyOf(String pageId, String... pageIdKeys) {
         return Arrays.stream(pageIdKeys)
             .map(config::getProperty)
-            .anyMatch(pageId::equalsIgnoreCase);
+            .anyMatch(pageIdKey -> pageId.equalsIgnoreCase(pageIdKey));
     }
 }
