@@ -5,6 +5,9 @@ import com.lexler.kata.routingrules.event.BotEvent;
 import com.lexler.kata.routingrules.log.Log;
 import com.lexler.kata.routingrules.log.LogMessage;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 import static com.lexler.kata.routingrules.Page.Audience.*;
 import static com.lexler.kata.routingrules.constants.ConstantStrings.*;
 import static com.lexler.kata.routingrules.constants.LogParams.*;
@@ -14,6 +17,16 @@ import static com.lexler.kata.routingrules.log.LogMessage.message;
 public class RoutingRules {
 
     private static final Log log = Log.forClass(RoutingRules.class);
+
+    private static final Map<String, Route> EXEC_TAG_ROUTES = ignoringCase(Map.of(
+        FALCONAIR, new Route("falcon.exec.queue", AUTHOR_EXEC_FALCONAIR),
+        DUCKWINGS, new Route("duckwings.exec.queue", AUTHOR_EXEC_DUCKWINGS),
+        GR, new Route("gr.exec.queue", AUTHOR_EXEC_GR)));
+
+    private static final Map<String, Route> EXEC_MENTION_ROUTES = ignoringCase(Map.of(
+        FALCONAIR, new Route("falcon.exec.queue", EXEC_MENTION_FALCONAIR),
+        DUCKWINGS, new Route("duckwings.exec.queue", EXEC_MENTION_DUCKWINGS),
+        GR, new Route("gr.exec.queue", EXEC_MENTION_GR)));
 
     private final RoutingConfig config;
     private final Pages pages;
@@ -79,24 +92,14 @@ public class RoutingRules {
             log.info(conversationMessage(conversation.event(), "Conversation has Author Exec tags. Assigning to one of the exec queues", "getAssignedWorkQueue")
                 .param(BIND_STATUS, conversation.isBound())
                 .param(EVENT_STATUS, conversation.verificationStatus()));
-            if (FALCONAIR.equalsIgnoreCase(conversation.execTag())) {
-                return new Route("falcon.exec.queue", AUTHOR_EXEC_FALCONAIR);
-            } else if (DUCKWINGS.equalsIgnoreCase(conversation.execTag())) {
-                return new Route("duckwings.exec.queue", AUTHOR_EXEC_DUCKWINGS);
-            } else if (GR.equalsIgnoreCase(conversation.execTag())) {
-                return new Route("gr.exec.queue", AUTHOR_EXEC_GR);
-            }
-        } else if (conversation.hasExecMention()) {
+            return EXEC_TAG_ROUTES.getOrDefault(conversation.execTag(), Route.NOWHERE);
+        }
+        if (conversation.hasExecMention()) {
             log.info(conversationMessage(conversation.event(), "Conversation has Exec mention tags.", "getAssignedWorkQueue")
                 .param(EXEC_MENTION, conversation.execMention()));
-            if (FALCONAIR.equalsIgnoreCase(conversation.execMention())) {
-                return new Route("falcon.exec.queue", EXEC_MENTION_FALCONAIR);
-            } else if (DUCKWINGS.equalsIgnoreCase(conversation.execMention())) {
-                return new Route("duckwings.exec.queue", EXEC_MENTION_DUCKWINGS);
-            } else if (GR.equalsIgnoreCase(conversation.execMention())) {
-                return new Route("gr.exec.queue", EXEC_MENTION_GR);
-            }
-        } else if (conversation.hasUnknownBrand()) {
+            return EXEC_MENTION_ROUTES.getOrDefault(conversation.execMention(), Route.NOWHERE);
+        }
+        if (conversation.hasUnknownBrand()) {
             log.info(conversationMessage(conversation.event(), "Conversation has no customer brand. Assigning default falconair queue based on network type and pageid.", "getAssignedWorkQueue")
                 .param(CUSTOMER_BRAND, conversation.brand()));
             if (page.serves(FRENCH_SPEAKERS)) {
@@ -178,7 +181,12 @@ public class RoutingRules {
                 }
             }
         }
-        return Route.NOWHERE;
+    }
+
+    private static Map<String, Route> ignoringCase(Map<String, Route> routesByTag) {
+        Map<String, Route> routes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        routes.putAll(routesByTag);
+        return routes;
     }
 
     private static LogMessage conversationMessage(BotEvent event, String text, String method) {
