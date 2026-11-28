@@ -1,4 +1,4 @@
-package com.lexler.ae.routing.constants;
+package com.lexler.kata.routingrules.constants;
 
 public class LogParams {
 

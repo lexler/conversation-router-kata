@@ -1,4 +1,4 @@
-package com.lexler.ae.routing.util;
+package com.lexler.kata.routingrules.util;
 
 public final class StringUtils {
 

@@ -1,4 +1,4 @@
-package com.lexler.ae.routing;
+package com.lexler.kata.routingrules;
 
 public record QueueInfo(String message, String queueId) {
 }
