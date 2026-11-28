@@ -2,7 +2,7 @@
 
 Habit Hooks is a code-smell sensor tool, run as `habit-hooks`. It reports structural smells (long methods, complexity, deep nesting, too many parameters, oversized files, duplication) with coaching guidance. Follow that guidance and clean up the code. Setup: `docs/habit-hooks/setup.md`.
 
-The target is `src/main/java/com/lexler/ae/routing/RoutingRules.java`. Keep refactoring it until Habit Hooks reports no findings on it and on any file the sweep created or changed. There is no limit on the number of commits.
+Start with `src/main/java/com/lexler/ae/routing/RoutingRules.java` and clean it up in small steps until Habit Hooks reports no findings on it and on any file the sweep created or changed.
 
 ## Before starting
 
@@ -24,9 +24,10 @@ Don't check in with the user about any of the fixes. We have source control.
 
 Fixes are refactorings: they must not change behavior. The acceptance test and its approved file are the judge; never edit or re-approve the approved file. Changing a method's signature is fine when you update its callers, the test included.
 
-If you find a potential product bug, don't fix it. Log it in `docs/habit-hooks-sweep-findings.md` and commit with `bash tools/create-commit-message.sh completely_safe documentation "<short-message>"`.
+If you find a potential product bug, don't fix it since we're in the refactoring mode, so there should be no behavioral changes until we are done with refactoring.
+Log it in `docs/habit-hooks/sweep-findings.md` and commit with `bash tools/create-commit-message.sh completely_safe documentation "<short-message>"`.
 
-## Smells are prompts to investigate, not limits
+## Smells are prompts to investigate
 
 Findings point at places worth looking at. They are not thresholds to get under. The goal is well-designed code that speaks the domain language in `docs/terms.md`: small clear methods, no duplication, cohesive classes.
 
