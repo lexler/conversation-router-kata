@@ -1,4 +1,4 @@
-package com.lexler.ae.routing.log;
+package com.lexler.kata.routingrules.log;
 
 import java.lang.System.Logger.Level;
 

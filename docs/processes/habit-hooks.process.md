@@ -2,7 +2,7 @@
 
 Habit Hooks is a code-smell sensor tool, run as `habit-hooks`. It reports structural smells (long methods, complexity, deep nesting, too many parameters, oversized files, duplication) with coaching guidance. Follow that guidance and clean up the code. Setup: `docs/habit-hooks.md`.
 
-The target is `src/main/java/com/lexler/ae/routing/RoutingRules.java`. Keep refactoring it until Habit Hooks reports no findings on it and on any file the sweep created or changed. There is no limit on the number of commits.
+The target is `src/main/java/com/lexler/kata/routingrules/RoutingRules.java`. Keep refactoring it until Habit Hooks reports no findings on it and on any file the sweep created or changed. There is no limit on the number of commits.
 
 ## Before starting
 
@@ -12,7 +12,7 @@ The target is `src/main/java/com/lexler/ae/routing/RoutingRules.java`. Keep refa
 ## Loop
 
 1. Check `git status` that everything is checked in, otherwise stop.
-1. Run `habit-hooks --branch main`, or `habit-hooks --file src/main/java/com/lexler/ae/routing/RoutingRules.java` before the first commit.
+1. Run `habit-hooks --branch main`, or `habit-hooks --file src/main/java/com/lexler/kata/routingrules/RoutingRules.java` before the first commit.
 1. Apply one fix.
 1. Run `./build_and_test.sh`. If it fails, fix or revert with `git revert`, never `git reset --hard`.
 1. Commit with the message from `bash tools/create-commit-message.sh proven refactor "<short-message>"` (gives `- r <short-message>`).

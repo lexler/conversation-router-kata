@@ -1,4 +1,4 @@
-package com.lexler.ae.routing.event;
+package com.lexler.kata.routingrules.event;
 
 public record Coordinate(String networkKey, String externalId) {
 }

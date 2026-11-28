@@ -14,13 +14,13 @@ Source: `github.com/habit-hooks/habit-hooks`
 ## Set up the repo
 
 1. Run `habit-hooks init` in the repo. It detects Java, writes `.habit-hooks/config.toml`, and should end with "Nothing missing".
-1. Check a run: `habit-hooks --file src/main/java/com/lexler/ae/routing/RoutingRules.java` lists the smells of the starting code.
+1. Check a run: `habit-hooks --file src/main/java/com/lexler/kata/routingrules/RoutingRules.java` lists the smells of the starting code.
 
 ## Usage
 
 Run from the repo root.
 
-- `habit-hooks --file src/main/java/com/lexler/ae/routing/RoutingRules.java`: one file
+- `habit-hooks --file src/main/java/com/lexler/kata/routingrules/RoutingRules.java`: one file
 - `habit-hooks --branch main`: files changed since `main`, including new ones
 - `habit-hooks --all`: the whole repo
 

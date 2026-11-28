@@ -1,10 +1,10 @@
-package com.lexler.ae.routing;
+package com.lexler.kata.routingrules;
 
-import com.lexler.ae.routing.config.RoutingConfig;
-import com.lexler.ae.routing.config.PropertiesRoutingConfig;
-import com.lexler.ae.routing.event.BotEvent;
-import com.lexler.ae.routing.event.Coordinate;
-import com.lexler.ae.routing.event.CustomerInfo;
+import com.lexler.kata.routingrules.config.RoutingConfig;
+import com.lexler.kata.routingrules.config.PropertiesRoutingConfig;
+import com.lexler.kata.routingrules.event.BotEvent;
+import com.lexler.kata.routingrules.event.Coordinate;
+import com.lexler.kata.routingrules.event.CustomerInfo;
 import org.approvaltests.combinations.CombinationApprovals;
 import org.junit.jupiter.api.Test;
 
