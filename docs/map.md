@@ -7,6 +7,7 @@ conversation-router-kata/
 ├── src/test/java/com/lexler/kata/routingrules/    RoutingRulesAcceptanceTest and its approved file
 ├── build_and_test.sh, build_and_test.bat          build and run all tests
 ├── tools/create-commit-message.sh                 builds commit messages
+├── .claude/commands/habit-hooks-refactoring.md    /habit-hooks-refactoring: the refactoring process, run from Claude Code
 └── docs/
     ├── map.md                      this file
     ├── project.md                  the story
