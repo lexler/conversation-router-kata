@@ -9,6 +9,14 @@ Start with `src/main/java/com/lexler/kata/routingrules/RoutingRules.java` and cl
 1. Check `git status` that everything is checked in, otherwise stop.
 1. If on `main`, create and switch to a new branch from `main` (for example `git switch -c habit-hooks-run-1 main`), so `main` stays a clean baseline.
 
+## Set up Habit Hooks
+
+1. If the `habit-hooks` command isn't found, install it following `docs/habit-hooks/setup.md`.
+1. Run `habit-hooks init`. It writes `.habit-hooks/config.toml` when there is none, leaves an existing one as it is, and lists what is still missing. Install each missing tool following `docs/habit-hooks/setup.md`, then run it again, until it ends with "Nothing missing".
+1. If `git status` shows a new `.habit-hooks/config.toml`, commit it with the message from `bash tools/create-commit-message.sh completely_safe environment "set up Habit Hooks"`.
+
+When Habit Hooks says "nothing scanned", the setup is broken, even though it still ends with "automated checks passed". Fix the setup before going on.
+
 ## Loop
 
 1. Check `git status` that everything is checked in, otherwise stop.
