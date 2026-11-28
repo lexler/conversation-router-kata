@@ -1,6 +1,8 @@
 # Conversation router kata
 
-FalconAir recently bought DuckWings. Customers of both airlines write to the airlines' pages on Facebook and Instagram, and one bot answers on all of them. Until the loyalty programs merge, each airline keeps its own support teams, so for every conversation the conversation router decides which team's queue it goes to.
+**FalconAir** recently acquired **DuckWings** airline. Customers of both airlines write to the airlines' pages on Facebook and Instagram, and one bot answers on all of them. Until the loyalty programs merge, each airline keeps its own support teams, so for every conversation the conversation router decides which team's queue it goes to.
+
+![Customers write to FalconAir's and DuckWings's Facebook and Instagram pages, and the conversation router sends each conversation to a support team](docs/images/conversation-router.png)
 
 The routing rules grew one exception at a time: a team per airline, per market and per language, VIP customers, executive mentions, disruptions. Today they all live in one method, `RoutingRules.getAssignedWorkQueue`, and the developers are afraid to touch it.
 
@@ -12,16 +14,22 @@ The kata: refactor that method into code the team can change again, without chan
 
 ## Run
 
-```
-./build_and_test.sh
-```
+1. Install [mise](https://mise.jdx.dev/getting-started.html). It provides the right Java version.
+2. Run `./build_and_test.sh`, or `build_and_test.bat` on Windows. The first run downloads Java 25 and Maven.
 
-With coverage, `./build_and_test.sh -Pcoverage` writes a JaCoCo report to `target/site/jacoco/index.html`.
+It ends with `Build and test: Ns, exit 0` when all tests pass.
 
-Java 25 via `mise`. On Windows, use `build_and_test.bat`. Setup, including the commit notation: `docs/setup.md`.
+## Ways to do the kata
+
+- Any refactoring technique, by hand or with AI.
+- With Habit Hooks: smell sensors find what to fix next and coach an AI agent through the cleanup. Start with `docs/habit-hooks/kata-steps.md`.
+
+## Branches
+
+- `main`: the starting code. Start here.
+- `ae-november-2026`: a workshop run. An AI agent refactored `RoutingRules` guided by Habit Hooks, then the group started BDD-style approval tests (`RoutingStoryboard`, `RoutingRulesTest`).
+- `human-lift-if`: a person refactoring by hand with the Lift-If technique, for comparison. It also removes functionality nothing uses, so its approved file differs from `main`'s.
 
 ## More
 
-- `docs/project.md`: the story in full
-- `docs/terms.md`: the domain language
-- `docs/habit-hooks.md`: install and set up Habit Hooks smell sensors, and `docs/processes/habit-hooks.process.md`: the cleanup loop for an AI agent
+Where everything is, including the docs for doing the kata with Habit Hooks: `docs/map.md`.
