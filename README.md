@@ -12,13 +12,10 @@ The kata: refactor that method into code the team can change again, without chan
 
 ## Run
 
-```
-./build_and_test.sh
-```
+1. Install [mise](https://mise.jdx.dev/getting-started.html). It provides the right Java version.
+2. Run `./build_and_test.sh`, or `build_and_test.bat` on Windows. The first run downloads Java 25 and Maven.
 
-With coverage, `./build_and_test.sh -Pcoverage` writes a JaCoCo report to `target/site/jacoco/index.html`.
-
-Java 25 via `mise`. On Windows, use `build_and_test.bat`. Setup, including the commit notation: `docs/setup.md`.
+It ends with `Build and test: Ns, exit 0` when all tests pass.
 
 ## More
 
