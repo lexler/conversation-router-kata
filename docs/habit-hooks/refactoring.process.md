@@ -25,7 +25,7 @@ When Habit Hooks says "nothing scanned", the setup is broken, even though it sti
 1. Run `./build_and_test.sh`. If it fails, fix or revert with `git revert`, never `git reset --hard`.
 1. Commit with the message from `bash tools/create-commit-message.sh proven refactor "<short-message>"` (gives `- r <short-message>`).
 1. Repeat until `habit-hooks --all` reports no findings, or only findings you decided to leave.
-   When you stop, list each finding you left and why in `docs/habit-hooks/sweep-findings.md`, next to the possible bugs, and commit it with the message from `bash tools/create-commit-message.sh completely_safe documentation "list the findings left"`.
+   When you stop, list each finding you left and why in `docs/habit-hooks/sweep-findings.md`, under "Findings left unresolved", and commit it with the message from `bash tools/create-commit-message.sh completely_safe documentation "list the findings left"`.
 
 ## Fixes
 
@@ -34,7 +34,7 @@ Don't check in with the user about any of the fixes. We have source control.
 Fixes are refactorings: they must not change behavior. The acceptance test and its approved file are the judge; never edit or re-approve the approved file. Changing a method's signature is fine when you update its callers, the test included.
 
 If you find a potential product bug, don't fix it since we're in the refactoring mode, so there should be no behavioral changes until we are done with refactoring.
-Log it in `docs/habit-hooks/sweep-findings.md` and commit with `bash tools/create-commit-message.sh completely_safe documentation "<short-message>"`.
+Log it in `docs/habit-hooks/sweep-findings.md`, under "Possible bugs", and commit with `bash tools/create-commit-message.sh completely_safe documentation "<short-message>"`.
 
 ## Smells are prompts to investigate
 
