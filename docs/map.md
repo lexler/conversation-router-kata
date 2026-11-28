@@ -8,12 +8,12 @@ conversation-router-kata/
 ├── build_and_test.sh, build_and_test.bat          build and run all tests
 ├── tools/create-commit-message.sh                 builds commit messages
 └── docs/
-    ├── map.md                  this file
-    ├── project.md              the story
-    ├── terms.md                the domain language
-    ├── commit-notation.md      the commit message codes
-    └── habit-hooks/            doing the kata with Habit Hooks
-        ├── kata-steps.md       the steps, in order
-        ├── setup.md            install, set up the repo, run by hand
-        └── cleanup.process.md  the loop an AI agent follows
+    ├── map.md                      this file
+    ├── project.md                  the story
+    ├── terms.md                    the domain language
+    ├── commit-notation.md          the commit message codes
+    └── habit-hooks/                doing the kata with Habit Hooks
+        ├── kata-steps.md           the steps, in order
+        ├── setup.md                install, set up the repo, run by hand
+        └── refactoring.process.md  the loop an AI agent follows
 ```
