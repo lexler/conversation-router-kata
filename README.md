@@ -2,6 +2,8 @@
 
 FalconAir recently bought DuckWings. Customers of both airlines write to the airlines' pages on Facebook and Instagram, and one bot answers on all of them. Until the loyalty programs merge, each airline keeps its own support teams, so for every conversation the conversation router decides which team's queue it goes to.
 
+![Customers write to FalconAir's and DuckWings's Facebook and Instagram pages, and the conversation router sends each conversation to a support team](docs/images/conversation-router.png)
+
 The routing rules grew one exception at a time: a team per airline, per market and per language, VIP customers, executive mentions, disruptions. Today they all live in one method, `RoutingRules.getAssignedWorkQueue`, and the developers are afraid to touch it.
 
 The kata: refactor that method into code the team can change again, without changing what it does. Use any technique, by hand or with AI.
