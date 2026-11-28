@@ -32,4 +32,4 @@ It ends with `Build and test: Ns, exit 0` when all tests pass.
 
 ## More
 
-Where everything is, including the docs for doing the kata with Habit Hooks: `docs/map.md`.
+Where everything is: `docs/map.md`.
