@@ -6,6 +6,8 @@ Rules for AI coding agents working in this repo.
 
 The project, its story and its domain language: @docs/project.md and `docs/terms.md`.
 
+Where everything is: @docs/map.md
+
 Never use Claude Code's persistent memory system for this project. Durable guidance belongs in-repo: this file or `docs/`.
 
 ## Build and test
