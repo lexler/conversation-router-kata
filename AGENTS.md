@@ -16,7 +16,12 @@ Run `./build_and_test.sh` after every change. It prints `Build and test: Ns, exi
 
 ## Commit messages
 
-Build every commit message with `bash tools/create-commit-message.sh <risk> <intention> "<message>"` and use its stdout. `docs/commit-notation.md` explains the codes.
+Build every commit message with `bash tools/create-commit-message.sh <risk> <intention> "<message>"` and use its stdout. `docs/commit-notation.md` explains the codes. It takes the risk and intention by name, for example:
+
+```
+bash tools/create-commit-message.sh proven refactor "extract method"
+- r extract method
+```
 
 ## Decisions
 
