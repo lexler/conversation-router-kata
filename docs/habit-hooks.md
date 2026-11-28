@@ -11,14 +11,14 @@ Source: `github.com/habit-hooks/habit-hooks`
 1. Install the detectors: `brew install pmd jscpd jq`.
    On Windows, run the scripts in Git Bash or WSL, then install jscpd with `npm install -g jscpd`, jq with `winget install jqlang.jq`, and PMD from [pmd.github.io](https://pmd.github.io/) with its `bin` on the `PATH`. The Windows steps are untested.
 1. Check the setup: `habit-hooks init` in the repo should end with "Nothing missing". It leaves the existing config as it is.
-1. Check a run: `tools/run-habit-hooks.sh --short src/main/java/com/lexler/ae/routing/RoutingRules.java` lists the smells of the starting code, 12 findings.
+1. Check a run: `tools/run-habit-hooks.sh --short src/main/java/com/lexler/kata/routingrules/RoutingRules.java` lists the smells of the starting code, 12 findings.
 
 ## Usage
 
 `tools/run-habit-hooks.sh` checks that the tools are installed, never reinstalls them, and runs from the repo root.
 
-- `tools/run-habit-hooks.sh src/main/java/com/lexler/ae/routing/RoutingRules.java`: full coaching output for one file
-- `tools/run-habit-hooks.sh --short src/main/java/com/lexler/ae/routing/RoutingRules.java`: compact smell summary
+- `tools/run-habit-hooks.sh src/main/java/com/lexler/kata/routingrules/RoutingRules.java`: full coaching output for one file
+- `tools/run-habit-hooks.sh --short src/main/java/com/lexler/kata/routingrules/RoutingRules.java`: compact smell summary
 - `tools/run-habit-hooks.sh --branch main`: files changed since `main`, including new ones
 - `tools/run-habit-hooks.sh --all`: everything under `src/main/java`
 

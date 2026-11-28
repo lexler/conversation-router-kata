@@ -1,4 +1,4 @@
-package com.lexler.ae.routing.config;
+package com.lexler.kata.routingrules.config;
 
 @FunctionalInterface
 public interface RoutingConfig {

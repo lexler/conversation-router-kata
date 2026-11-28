@@ -1,16 +1,16 @@
-package com.lexler.ae.routing;
+package com.lexler.kata.routingrules;
 
-import com.lexler.ae.routing.config.RoutingConfig;
-import com.lexler.ae.routing.event.BotEvent;
-import com.lexler.ae.routing.event.CustomerInfo;
-import com.lexler.ae.routing.log.Log;
-import com.lexler.ae.routing.util.StringUtils;
+import com.lexler.kata.routingrules.config.RoutingConfig;
+import com.lexler.kata.routingrules.event.BotEvent;
+import com.lexler.kata.routingrules.event.CustomerInfo;
+import com.lexler.kata.routingrules.log.Log;
+import com.lexler.kata.routingrules.util.StringUtils;
 
-import static com.lexler.ae.routing.constants.ConstantStrings.*;
-import static com.lexler.ae.routing.constants.DefaultStrings.*;
-import static com.lexler.ae.routing.constants.LogParams.*;
-import static com.lexler.ae.routing.constants.RouteMessages.*;
-import static com.lexler.ae.routing.log.LogMessage.message;
+import static com.lexler.kata.routingrules.constants.ConstantStrings.*;
+import static com.lexler.kata.routingrules.constants.DefaultStrings.*;
+import static com.lexler.kata.routingrules.constants.LogParams.*;
+import static com.lexler.kata.routingrules.constants.RouteMessages.*;
+import static com.lexler.kata.routingrules.log.LogMessage.message;
 
 public class RoutingRules {
 

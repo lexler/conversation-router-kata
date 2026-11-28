@@ -1,4 +1,4 @@
-package com.lexler.ae.routing.config;
+package com.lexler.kata.routingrules.config;
 
 import java.io.IOException;
 import java.io.InputStream;
