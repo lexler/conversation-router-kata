@@ -2,7 +2,7 @@
 
 Habit Hooks is a code-smell sensor tool, run as `habit-hooks`. It reports structural smells (long methods, complexity, deep nesting, too many parameters, oversized files, duplication) with coaching guidance. Follow that guidance and clean up the code. Setup: `docs/habit-hooks/setup.md`.
 
-Start with `src/main/java/com/lexler/kata/routingrules/RoutingRules.java` and clean it up in small steps until Habit Hooks reports no findings on it and on any file the sweep created or changed.
+Start with `src/main/java/com/lexler/kata/routingrules/RoutingRules.java` and clean it up in small steps until `habit-hooks --all` reports no findings. `--all` scans every file, so the classes you extract are checked too.
 
 ## Before starting
 
@@ -20,11 +20,12 @@ When Habit Hooks says "nothing scanned", the setup is broken, even though it sti
 ## Loop
 
 1. Check `git status` that everything is checked in, otherwise stop.
-1. Run `habit-hooks --branch main`, or `habit-hooks --file src/main/java/com/lexler/kata/routingrules/RoutingRules.java` before the first commit.
-1. Apply one fix.
+1. Run `habit-hooks --all`.
+1. Apply one fix, starting with the findings in `RoutingRules.java`.
 1. Run `./build_and_test.sh`. If it fails, fix or revert with `git revert`, never `git reset --hard`.
 1. Commit with the message from `bash tools/create-commit-message.sh proven refactor "<short-message>"` (gives `- r <short-message>`).
-1. Repeat until Habit Hooks reports no findings.
+1. Repeat until `habit-hooks --all` reports no findings, or only findings you decided to leave.
+   When you stop, list each finding you left and why in `docs/habit-hooks/sweep-findings.md`, next to the possible bugs, and commit it with the message from `bash tools/create-commit-message.sh completely_safe documentation "list the findings left"`.
 
 ## Fixes
 
@@ -41,4 +42,4 @@ Findings point at places worth looking at. They are not thresholds to get under.
 
 - Never shuffle code between files just to reduce a line count.
 - Extract a method or class only for a genuine responsibility.
-- It is fine to leave a finding unresolved; say which ones and why in the report.
+- It is fine to leave a finding unresolved when no change would improve the code.
