@@ -1,6 +1,6 @@
 # Habit Hooks sweep
 
-Habit Hooks is a code-smell sensor tool, run as `habit-hooks`. It reports structural smells (long methods, complexity, deep nesting, too many parameters, oversized files, duplication) with coaching guidance. Follow that guidance and clean up the code. Setup: `docs/habit-hooks.md`.
+Habit Hooks is a code-smell sensor tool, run as `habit-hooks`. It reports structural smells (long methods, complexity, deep nesting, too many parameters, oversized files, duplication) with coaching guidance. Follow that guidance and clean up the code. Setup: `docs/habit-hooks/setup.md`.
 
 The target is `src/main/java/com/lexler/ae/routing/RoutingRules.java`. Keep refactoring it until Habit Hooks reports no findings on it and on any file the sweep created or changed. There is no limit on the number of commits.
 
