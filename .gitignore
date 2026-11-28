@@ -4,4 +4,3 @@ target/
 *.received.*
 .approval_tests_temp/
 playground/
-.habit-hooks/
