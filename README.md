@@ -19,6 +19,4 @@ It ends with `Build and test: Ns, exit 0` when all tests pass.
 
 ## More
 
-- `docs/project.md`: the story in full
-- `docs/terms.md`: the domain language
-- `docs/habit-hooks.md`: install and set up Habit Hooks smell sensors, and `docs/processes/habit-hooks.process.md`: the cleanup loop for an AI agent
+Where everything is, including the docs for doing the kata with Habit Hooks: `docs/map.md`.
